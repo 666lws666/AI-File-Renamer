@@ -1,0 +1,41 @@
+# Python virtual environment
+.venv/
+
+# Sensitive config (contains API keys)
+config/settings.json
+
+# Logs
+logs/
+*.log
+
+# Rename history (contains local file paths)
+rename_history/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Build artifacts
+dist/
+build/
+*.spec
+
+# Test shortcuts
+*_test_*.bat
+*_test_*.vbs
+_diag*.py
+_diag*.txt
+make_shortcut.ps1
+check_shortcut.ps1
+create_shortcut.ps1
