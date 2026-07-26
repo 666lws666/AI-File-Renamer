@@ -91,8 +91,9 @@ class SettingsDialog(QDialog):
         layout.addWidget(self.txt_base_url)
 
         layout.addWidget(QLabel("模型:"))
-        self.txt_model = QLineEdit()
-        layout.addWidget(self.txt_model)
+        self.cmb_model = QComboBox()
+        self.cmb_model.setEditable(True)  # Allow custom model names
+        layout.addWidget(self.cmb_model)
 
         btn_test = QPushButton("🔗 测试连接")
         btn_test.clicked.connect(self._test_connection)
@@ -140,7 +141,7 @@ class SettingsDialog(QDialog):
         self.cmb_provider.setCurrentText(config.provider)
         self.txt_api_key.setText(config.api_key)
         self.txt_base_url.setText(config.base_url)
-        self.txt_model.setText(config.model)
+        self.cmb_model.setCurrentText(config.model)
         self.spin_max_size.setValue(config.max_file_size_mb)
         self.spin_max_chars.setValue(config.max_content_chars)
         self.chk_organize.setChecked(config.auto_organize)
@@ -148,38 +149,85 @@ class SettingsDialog(QDialog):
 
     def _on_provider_changed(self, provider: str):
         defaults = {
-            "deepseek": ("https://api.deepseek.com", "deepseek-chat"),
-            "openai": ("https://api.openai.com/v1", "gpt-4o"),
-            "claude": ("https://api.anthropic.com", "claude-sonnet-4-20250514"),
+            "deepseek": ("https://api.deepseek.com/v1", ["deepseek-v4-pro", "deepseek-v4-flash"]),
+            "openai": ("https://api.openai.com/v1", ["gpt-4o", "gpt-4o-mini"]),
+            "claude": ("https://api.anthropic.com", ["claude-sonnet-4-20250514", "claude-haiku-4-5-20251001"]),
         }
         if provider in defaults:
-            url, model = defaults[provider]
+            url, models = defaults[provider]
             self.txt_base_url.setText(url)
-            self.txt_model.setText(model)
+            self.cmb_model.clear()
+            self.cmb_model.addItems(models)
+            self.cmb_model.setCurrentIndex(0)
 
     def _test_connection(self):
-        logger.info("测试 AI 连接...")
+        from PySide6.QtWidgets import QMessageBox
         from ..core.ai_engine import AIEngine
 
-        # Temporarily apply current form values to config
-        config = self.app.app_config
-        config.provider = self.cmb_provider.currentText()
-        config.api_key = self.txt_api_key.text()
-        config.base_url = self.txt_base_url.text()
-        config.model = self.txt_model.text()
+        # Read values from form
+        provider = self.cmb_provider.currentText()
+        api_key = self.txt_api_key.text().strip()
+        base_url = self.txt_base_url.text().strip()
+        model = self.cmb_model.currentText().strip()
 
-        try:
-            engine = AIEngine(config)
-            ok, msg = engine.test_connection()
-        except Exception as e:
-            ok, msg = False, str(e)
+        # Validate input
+        if not api_key:
+            QMessageBox.warning(self, "提示", "请先输入 API Key。")
+            return
+
+        if not base_url:
+            QMessageBox.warning(self, "提示", "请先输入 Base URL。")
+            return
+
+        logger.info(f"测试 {provider} 连接: {base_url} / {model}")
+        logger.info(f"API Key: {api_key[:8]}...{api_key[-4:]}")
+
+        # Apply to config temporarily for this test
+        config = self.app.app_config
+        config.provider = provider
+        config.api_key = api_key
+        config.base_url = base_url
+        config.model = model
+
+        # Test with current URL
+        ok, msg, detail = self._try_connect(config)
 
         if ok:
-            from PySide6.QtWidgets import QMessageBox
-            QMessageBox.information(self, "连接成功", msg)
-        else:
-            from PySide6.QtWidgets import QMessageBox
-            QMessageBox.critical(self, "连接失败", f"无法连接到 AI 服务:\n{msg}")
+            QMessageBox.information(self, "连接成功", detail)
+            return
+
+        # If DeepSeek fails, try with /v1 suffix
+        if provider == "deepseek" and not base_url.endswith("/v1"):
+            logger.info("尝试带 /v1 的 URL...")
+            config.base_url = base_url.rstrip("/") + "/v1"
+            ok2, msg2, detail2 = self._try_connect(config)
+            if ok2:
+                # Update the URL field to the working one
+                self.txt_base_url.setText(config.base_url)
+                QMessageBox.information(self, "连接成功",
+                    f"使用 /v1 URL 连接成功。\nBase URL 已自动更新为:\n{config.base_url}")
+                return
+            # Restore original URL
+            config.base_url = base_url
+
+        QMessageBox.critical(self, "连接失败", detail)
+
+    @staticmethod
+    def _try_connect(config):
+        """Try to connect and return (ok, short_msg, full_detail)."""
+        try:
+            from ..core.ai_engine import AIEngine
+            engine = AIEngine(config)
+            ok, msg = engine.test_connection()
+            if ok:
+                return True, msg, f"连接成功！\n\n服务商: {config.provider}\n模型: {config.model}\n{msg}"
+            else:
+                return False, msg, f"连接失败\n\n服务商: {config.provider}\nURL: {config.base_url}\n\n错误详情:\n{msg}"
+        except Exception as e:
+            import traceback
+            detail = traceback.format_exc()
+            logger.error(f"连接异常:\n{detail}")
+            return False, str(e), f"连接异常\n\n服务商: {config.provider}\nURL: {config.base_url}\n\n{str(e)}\n\n详细日志已写入 logs/ 目录。"
 
     def _browse_org_dir(self):
         folder = QFileDialog.getExistingDirectory(self, "选择目标文件夹")
@@ -191,7 +239,7 @@ class SettingsDialog(QDialog):
         config.provider = self.cmb_provider.currentText()
         config.api_key = self.txt_api_key.text()
         config.base_url = self.txt_base_url.text()
-        config.model = self.txt_model.text()
+        config.model = self.cmb_model.currentText()
         config.max_file_size_mb = self.spin_max_size.value()
         config.max_content_chars = self.spin_max_chars.value()
         config.auto_organize = self.chk_organize.isChecked()

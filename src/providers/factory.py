@@ -26,7 +26,7 @@ def create_provider(config) -> BaseProvider:
         return DeepSeekProvider(
             api_key=config.api_key,
             base_url=config.base_url or "https://api.deepseek.com",
-            model=config.model or "deepseek-chat",
+            model=config.model or "deepseek-v4-pro",
         )
 
     # OpenAI uses the same SDK pattern

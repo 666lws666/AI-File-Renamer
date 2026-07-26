@@ -124,11 +124,20 @@ class BatchRenamePanel(QWidget):
         # Check API key
         config = self.app.app_config
         if not config.api_key:
-            QMessageBox.warning(
+            reply = QMessageBox.warning(
                 self, "需要 API Key",
-                "请先在设置中配置 AI 服务商的 API Key（菜单：工具 → 设置）。"
+                "尚未配置 AI 服务商的 API Key。\n\n是否现在打开设置进行配置？",
+                QMessageBox.Yes | QMessageBox.No
             )
-            return
+            if reply == QMessageBox.Yes:
+                from .settings_dialog import SettingsDialog
+                dialog = SettingsDialog(self.app, self)
+                dialog.exec()
+                # After settings, try again
+                if not self.app.app_config.api_key:
+                    return
+            else:
+                return
 
         self._run_pipeline(items)
 
