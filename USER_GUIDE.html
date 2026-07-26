@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI File Renamer — 用户指南</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-light: #dbeafe;
+    --success: #16a34a;
+    --warning: #ea580c;
+    --danger: #dc2626;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --code-bg: #f1f5f9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #6366f1 100%);
+    color: #fff;
+    padding: 64px 24px 48px;
+    text-align: center;
+  }
+  .hero h1 { font-size: 2.4em; margin-bottom: 12px; }
+  .hero p { font-size: 1.15em; opacity: .9; max-width: 640px; margin: 0 auto; }
+
+  /* ── Layout ── */
+  .container { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 32px;
+    margin-bottom: 40px;
+  }
+  .toc h2 { font-size: 1.2em; margin-bottom: 12px; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin: 6px 0; }
+  .toc a { color: var(--primary); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* ── Sections ── */
+  section { margin-bottom: 48px; }
+  h2 {
+    font-size: 1.6em;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--primary);
+    margin-bottom: 20px;
+  }
+  h3 { font-size: 1.2em; margin: 24px 0 10px; color: var(--primary); }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 16px 0;
+  }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 16px 0; }
+
+  /* ── Steps ── */
+  .steps { counter-reset: step; list-style: none; padding: 0; }
+  .steps li { counter-increment: step; padding: 12px 0 12px 48px; position: relative; }
+  .steps li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 8px;
+    width: 32px; height: 32px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .9em;
+  }
+
+  /* ── Code ── */
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+    font-size: .9em;
+  }
+  pre {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 16px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+    font-size: .85em;
+    line-height: 1.6;
+    margin: 12px 0;
+  }
+
+  /* ── Tables ── */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  th { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+  tr:hover { background: #f8fafc; }
+
+  /* ── Badges ── */
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: .8em; font-weight: 600; }
+  .badge-ok { background: #dcfce7; color: #166534; }
+  .badge-warn { background: #fef3c7; color: #92400e; }
+  .badge-info { background: #dbeafe; color: #1e40af; }
+
+  /* ── Tips ── */
+  .tip {
+    background: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+    font-size: .95em;
+  }
+  .tip strong { color: #92400e; }
+
+  .info {
+    background: #f0f9ff;
+    border-left: 4px solid #3b82f6;
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+    font-size: .95em;
+  }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 32px;
+    color: var(--text-muted);
+    font-size: .9em;
+    border-top: 1px solid var(--border);
+    margin-top: 48px;
+  }
+  footer a { color: var(--primary); }
+
+  /* ── Screenshots placeholder ── */
+  .screenshot {
+    background: var(--code-bg);
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    color: var(--text-muted);
+    margin: 16px 0;
+    font-size: .9em;
+  }
+
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 1.6em; }
+    .container { padding: 20px 16px; }
+    .card-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<div class="hero">
+  <h1>📁 AI File Renamer</h1>
+  <p>用 AI 读懂你的文件，自动生成清晰、可搜索、规范化的文件名</p>
+</div>
+
+<div class="container">
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<div class="toc">
+  <h2>📖 目录</h2>
+  <ol>
+    <li><a href="#overview">软件简介</a></li>
+    <li><a href="#install">安装与启动</a></li>
+    <li><a href="#apikey">配置 AI API Key</a></li>
+    <li><a href="#quickstart">快速上手</a></li>
+    <li><a href="#templates">命名模板系统</a></li>
+    <li><a href="#watch">文件夹监控</a></li>
+    <li><a href="#organize">自动归类</a></li>
+    <li><a href="#formats">支持的文件格式</a></li>
+    <li><a href="#faq">常见问题</a></li>
+  </ol>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<section id="overview">
+  <h2>1. 软件简介</h2>
+
+  <p>AI File Renamer 是一款 <strong>Windows 桌面应用</strong>，它使用云端 AI（DeepSeek、OpenAI 或 Claude）来<strong>读取文件的实际内容</strong>，然后自动生成描述性的文件名。</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3>🔍 智能重命名</h3>
+      <p>AI 阅读 PDF、Word、Excel、PPT、TXT、图片等文件内容，提取关键信息生成文件名。</p>
+    </div>
+    <div class="card">
+      <h3>📋 批量处理</h3>
+      <p>一次扫描整个文件夹，预览所有 AI 建议，确认后一键批量重命名。</p>
+    </div>
+    <div class="card">
+      <h3>↩ 一键撤销</h3>
+      <p>每次重命名操作都记录在案，随时可以撤销恢复到原始文件名。</p>
+    </div>
+    <div class="card">
+      <h3>🔒 隐私安全</h3>
+      <p>API Key 和配置文件都存储在本地。你的 API Key 不会被分享给第三方。</p>
+    </div>
+    <div class="card">
+      <h3>🎨 命名模板</h3>
+      <p>自定义文件名格式：日期、标题、标签、类型等变量自由组合。</p>
+    </div>
+    <div class="card">
+      <h3>👁 文件夹监控</h3>
+      <p>设定监控目录，新文件出现时自动 AI 处理，无需手动操作。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<section id="install">
+  <h2>2. 安装与启动</h2>
+
+  <h3>环境要求</h3>
+  <table>
+    <tr><th>项目</th><th>要求</th></tr>
+    <tr><td>操作系统</td><td>Windows 10 / 11</td></tr>
+    <tr><td>Python</td><td>3.11 或更高版本</td></tr>
+    <tr><td>网络</td><td>需要（调用 AI API）</td></tr>
+  </table>
+
+  <h3>安装步骤</h3>
+  <ol class="steps">
+    <li>
+      <strong>获取代码</strong><br>
+      <pre>git clone https://github.com/666lws666/AI-File-Renamer.git
+cd AI-File-Renamer</pre>
+      或者从 GitHub 下载 ZIP 并解压。
+    </li>
+    <li>
+      <strong>创建虚拟环境</strong><br>
+      <pre>python -m venv .venv</pre>
+    </li>
+    <li>
+      <strong>安装依赖</strong><br>
+      <pre>.venv\Scripts\pip install -r requirements.txt</pre>
+      <div class="info">国内用户可添加清华镜像加速：<code>-i https://pypi.tuna.tsinghua.edu.cn/simple</code></div>
+    </li>
+  </ol>
+
+  <h3>启动方式</h3>
+  <table>
+    <tr><th>方式</th><th>说明</th></tr>
+    <tr>
+      <td><strong>桌面快捷方式</strong></td>
+      <td>双击桌面上的 <code>AI-文件夹整理程序</code>（推荐）</td>
+    </tr>
+    <tr>
+      <td><strong>命令行</strong></td>
+      <td><pre>cd 项目目录
+.venv\Scripts\python -m src.main</pre></td>
+    </tr>
+    <tr>
+      <td><strong>.bat 文件</strong></td>
+      <td>双击项目目录中的 <code>AI-文件夹整理程序.bat</code></td>
+    </tr>
+  </table>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<section id="apikey">
+  <h2>3. 配置 AI API Key</h2>
+
+  <p>首次使用需要配置 AI 服务商的 API Key。<strong>推荐使用 DeepSeek</strong>（价格实惠，注册即送免费额度）。</p>
+
+  <h3>获取 API Key</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h3>🔵 DeepSeek <span class="badge badge-ok">推荐</span></h3>
+      <p>访问 <a href="https://platform.deepseek.com" target="_blank">platform.deepseek.com</a> → 注册 → API Keys → 创建 Key</p>
+      <p><strong>模型：</strong>deepseek-v4-pro（高质量）或 deepseek-v4-flash（快速便宜）</p>
+    </div>
+    <div class="card">
+      <h3>🟢 OpenAI</h3>
+      <p>访问 <a href="https://platform.openai.com" target="_blank">platform.openai.com</a> → API Keys → 创建 Key</p>
+      <p><strong>模型：</strong>gpt-4o 或 gpt-4o-mini</p>
+    </div>
+    <div class="card">
+      <h3>🟠 Claude</h3>
+      <p>访问 <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys → 创建 Key</p>
+      <p><strong>模型：</strong>claude-sonnet-4-20250514</p>
+    </div>
+  </div>
+
+  <h3>在软件中配置</h3>
+  <ol class="steps">
+    <li>启动软件，点击工具栏 <strong>⚙ 设置</strong></li>
+    <li>切换到 <strong>AI 服务商</strong> 标签页</li>
+    <li>选择服务商（如 DeepSeek）</li>
+    <li>粘贴 API Key</li>
+    <li>选择模型（下拉菜单会自动显示该服务商的可用模型）</li>
+    <li>点击 <strong>🔗 测试连接</strong> 确认配置正确</li>
+    <li>看到 <strong>"连接成功"</strong> 提示后，点击 OK 保存</li>
+  </ol>
+
+  <div class="tip">
+    <strong>💡 提示：</strong>如果测试连接失败，软件会自动尝试添加 <code>/v1</code> 后缀。DeepSeek 用户请确保模型名是 <code>deepseek-v4-pro</code> 或 <code>deepseek-v4-flash</code>（旧的 <code>deepseek-chat</code> 已废弃）。
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<section id="quickstart">
+  <h2>4. 快速上手</h2>
+
+  <h3>基本操作流程</h3>
+  <ol class="steps">
+    <li>
+      <strong>添加文件</strong><br>
+      点击 <strong>📁 添加文件夹</strong> 选择要处理的文件夹，或点击 <strong>📄 添加文件</strong> 选择单个文件。<br>
+      <em>建议先用少量文件测试，确认效果后再处理大量文件。</em>
+    </li>
+    <li>
+      <strong>AI 分析</strong><br>
+      点击 <strong>🔍 扫描并AI分析</strong>，软件将依次：
+      <ul style="margin:8px 0 0 20px">
+        <li>扫描所有文件</li>
+        <li>提取文本内容和元数据</li>
+        <li>调用 AI 生成结构化信息</li>
+        <li>按模板拼出建议的文件名</li>
+      </ul>
+      进度条会显示当前处理状态。
+    </li>
+    <li>
+      <strong>预览与编辑</strong><br>
+      在表格中查看 AI 建议的文件名：
+      <ul style="margin:8px 0 0 20px">
+        <li><strong>双击</strong>建议文件名可直接编辑</li>
+        <li>状态列显示：✅ 建议成功 / ❌ 失败（可查看失败原因）</li>
+        <li>红色高亮表示文件名冲突</li>
+      </ul>
+    </li>
+    <li>
+      <strong>应用重命名</strong><br>
+      确认无误后点击 <strong>✅ 应用重命名</strong>，确认对话框后将执行批量重命名。<br>
+      <em>所有操作记录保存在 <code>rename_history/</code> 目录。</em>
+    </li>
+    <li>
+      <strong>撤销（如需要）</strong><br>
+      如需恢复，点击 <strong>↩ 撤销上次</strong>，按批次反序还原所有文件名。
+    </li>
+  </ol>
+
+  <div class="tip">
+    <strong>⚠️ 重要：</strong>首次使用请先在测试文件夹上试验。重命名操作会直接修改磁盘上的文件名，虽然支持撤销，但建议先确认 AI 建议符合预期再应用。
+  </div>
+
+  <h3>界面说明</h3>
+  <table>
+    <tr><th>区域</th><th>功能</th></tr>
+    <tr><td>工具栏</td><td>添加文件/文件夹、撤销、切换视图、设置</td></tr>
+    <tr><td>📝 重命名视图</td><td>手动批处理模式（扫描→分析→预览→应用）</td></tr>
+    <tr><td>👁 监控视图</td><td>自动监控模式（设定目录后全自动处理）</td></tr>
+    <tr><td>预览表格</td><td>显示原文件名 ↔ 建议文件名，支持在线编辑</td></tr>
+    <tr><td>状态栏</td><td>当前操作状态、文件统计</td></tr>
+  </table>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<section id="templates">
+  <h2>5. 命名模板系统</h2>
+
+  <p>命名模板决定了 AI 的分析结果如何组装成最终文件名。AI 负责"理解文件内容"，模板负责"控制输出格式"。</p>
+
+  <h3>内置模板</h3>
+  <p>默认模板格式：<code>{date}_{title}.{ext}</code></p>
+  <p>例如 AI 分析出一份文件的日期是 2025-07-26、标题是"季度销售报告"，最终文件名为：<strong>2025-07-26_季度销售报告.pdf</strong></p>
+
+  <h3>可用变量</h3>
+  <table>
+    <tr><th>变量</th><th>说明</th><th>来源</th></tr>
+    <tr><td><code>{date}</code></td><td>文件日期</td><td>AI 从内容中提取</td></tr>
+    <tr><td><code>{title}</code></td><td>文件标题</td><td>AI 从内容中提取</td></tr>
+    <tr><td><code>{type}</code></td><td>文件类型/分类</td><td>AI 从内容中判断</td></tr>
+    <tr><td><code>{tags}</code></td><td>关键词标签</td><td>AI 从内容中提取</td></tr>
+    <tr><td><code>{language}</code></td><td>语言</td><td>AI 从内容中识别</td></tr>
+    <tr><td><code>{ext}</code></td><td>原文件扩展名</td><td>系统自动获取</td></tr>
+    <tr><td><code>{original_name}</code></td><td>原始文件名</td><td>系统自动获取</td></tr>
+    <tr><td><code>{file_type}</code></td><td>文件格式</td><td>系统自动获取</td></tr>
+  </table>
+
+  <h3>自定义模板</h3>
+  <p>在菜单栏选择 <strong>工具 → 模板管理</strong>：</p>
+  <ol class="steps">
+    <li>点击 <strong>新建</strong> 创建模板</li>
+    <li>命名模板（如"会议记录模板"）</li>
+    <li>编写格式模式（如 <code>{date}_{type}_{title}.{ext}</code>）</li>
+    <li>选择分隔符（<code>_</code>、<code>-</code>、空格等）</li>
+    <li>选择日期格式（YYYY-MM-DD / YYYYMMDD / YYYY-MM 等）</li>
+    <li>查看实时预览确认效果</li>
+    <li>点击 <strong>💾 保存模板</strong></li>
+  </ol>
+
+  <h3>模板示例</h3>
+  <table>
+    <tr><th>场景</th><th>模板</th><th>效果示例</th></tr>
+    <tr><td>默认</td><td><code>{date}_{title}.{ext}</code></td><td>2025-07-26_季度报告.pdf</td></tr>
+    <tr><td>带分类</td><td><code>{type}/{date}_{title}.{ext}</code></td><td>报告/2025-07-26_季度报告.pdf</td></tr>
+    <tr><td>带标签</td><td><code>{date}_{tags}_{title}.{ext}</code></td><td>2025-07-26_重要_销售_季度报告.pdf</td></tr>
+    <tr><td>短格式</td><td><code>{date}_{title}.{ext}</code></td><td>20250726_季度报告.pdf</td></tr>
+    <tr><td>保留原名</td><td><code>{date}_{title}_{original_name}.{ext}</code></td><td>2025-07-26_报告_原始文件名.pdf</td></tr>
+  </table>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<section id="watch">
+  <h2>6. 文件夹监控</h2>
+
+  <p>文件夹监控功能可以让你"设置一次，永远自动处理"。适合持续产生文件的场景（下载文件夹、扫描文件夹、项目文件夹等）。</p>
+
+  <h3>设置监控</h3>
+  <ol class="steps">
+    <li>点击工具栏的 <strong>👁 监控</strong> 切换到监控视图</li>
+    <li>点击 <strong>➕ 添加监控</strong></li>
+    <li>选择要监控的文件夹</li>
+    <li>选择处理模式：
+      <ul style="margin:8px 0 0 20px">
+        <li><strong>先审阅再重命名</strong> — 检测到新文件后在重命名视图中提示（推荐）</li>
+        <li><strong>自动重命名</strong> — 检测到新文件后全自动处理（无需人工干预）</li>
+      </ul>
+    </li>
+    <li>勾选"包含子文件夹"可递归监控</li>
+    <li>点击 OK</li>
+  </ol>
+
+  <div class="info">
+    <strong>📌 工作原理：</strong>监控使用文件系统事件检测新文件。当文件写入完成（大小稳定 2 秒后），自动触发 AI 分析。在"自动重命名"模式下，整个过程无需任何点击。
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<section id="organize">
+  <h2>7. 自动归类</h2>
+
+  <p>重命名后，软件可以自动将文件移动到分类好的子文件夹中。</p>
+
+  <h3>归类规则</h3>
+  <table>
+    <tr><th>规则</th><th>效果</th><th>示例</th></tr>
+    <tr><td>按日期</td><td>按年月分文件夹</td><td><code>2025/07/文件名.pdf</code></td></tr>
+    <tr><td>按文件类型</td><td>按 AI 识别的文档类型分</td><td><code>报告/文件名.pdf</code>、<code>合同/文件名.pdf</code></td></tr>
+    <tr><td>按分类</td><td>按 AI 标签的首个关键词分</td><td><code>销售/文件名.pdf</code></td></tr>
+    <tr><td>按项目</td><td>按 AI 识别的项目名分</td><td><code>XX项目/文件名.pdf</code></td></tr>
+  </table>
+
+  <h3>启用归类</h3>
+  <ol class="steps">
+    <li>打开 <strong>⚙ 设置 → 文件整理</strong></li>
+    <li>勾选"重命名后自动归类文件"</li>
+    <li>选择归类规则</li>
+    <li>选择目标文件夹（即归类的根目录）</li>
+    <li>保存</li>
+  </ol>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<section id="formats">
+  <h2>8. 支持的文件格式</h2>
+
+  <table>
+    <tr><th>类型</th><th>格式</th><th>提取方式</th></tr>
+    <tr><td>📄 PDF</td><td>.pdf</td><td>文本提取 + 元数据</td></tr>
+    <tr><td>📝 Word</td><td>.docx, .doc</td><td>段落文本 + 文档属性</td></tr>
+    <tr><td>📊 Excel</td><td>.xlsx, .xls, .csv</td><td>单元格内容</td></tr>
+    <tr><td>📽 PowerPoint</td><td>.pptx, .ppt</td><td>幻灯片文本</td></tr>
+    <tr><td>📋 纯文本</td><td>.txt, .md, .html, .rtf</td><td>全文提取</td></tr>
+    <tr><td>📚 电子书</td><td>.epub</td><td>元数据</td></tr>
+    <tr><td>🖼 图片</td><td>.jpg, .png, .gif, .webp, .bmp, .tiff, .avif</td><td>EXIF 元数据（拍摄日期、相机型号等）</td></tr>
+    <tr><td>🎬 视频</td><td>.mp4, .mov, .mkv, .avi, .webm, .wmv, .flv</td><td>文件大小、修改时间</td></tr>
+  </table>
+
+  <div class="tip">
+    <strong>💡 提示：</strong>图片和视频文件目前提取元数据（EXIF、修改时间等），不含 OCR 文字识别。AI 会基于元数据生成文件名。如需 OCR 识别扫描件内容，那是未来的扩展功能。
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<section id="faq">
+  <h2>9. 常见问题</h2>
+
+  <div class="card">
+    <h3>Q: 测试连接失败怎么办？</h3>
+    <p><strong>A:</strong> 依次检查：</p>
+    <ol style="margin:8px 0 0 20px">
+      <li>API Key 是否正确（注意不要有多余空格）</li>
+      <li>网络是否正常（能否访问 api.deepseek.com）</li>
+      <li>模型名是否正确（DeepSeek 请用 <code>deepseek-v4-pro</code>）</li>
+      <li>软件会自动尝试带 <code>/v1</code> 的 URL</li>
+      <li>查看 <code>logs/</code> 目录中的日志文件获取详细错误</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Q: 重命名后能撤销吗？</h3>
+    <p><strong>A:</strong> 可以。所有重命名操作记录在 <code>rename_history/</code> 目录的 JSONL 文件中。点击 <strong>↩ 撤销上次</strong> 按批次反序恢复。如果软件关闭后需要撤销，可以重新打开并点击撤销（只要历史文件还在）。</p>
+  </div>
+
+  <div class="card">
+    <h3>Q: AI 分析结果不理想怎么办？</h3>
+    <p><strong>A:</strong> 有几个办法：</p>
+    <ul style="margin:8px 0 0 20px">
+      <li>双击表格中的建议文件名直接手动修改</li>
+      <li>在设置中调整"系统提示词"，让 AI 按你的偏好工作</li>
+      <li>自定义命名模板，控制输出格式</li>
+      <li>每个文件都可以在应用前手动编辑最终文件名</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Q: 处理大文件会消耗很多 API 额度吗？</h3>
+    <p><strong>A:</strong> 不会。软件默认只发送前 4000 个字符给 AI（可在设置中调整），不会把整个文件上传。一个大文件的实际 API 消耗大约 1000-2000 tokens。以 DeepSeek 的价格（约 0.001 元/1K tokens），处理一个文件只需几分钱。</p>
+  </div>
+
+  <div class="card">
+    <h3>Q: 文件名冲突了怎么办？</h3>
+    <p><strong>A:</strong> 软件会自动检测同名冲突。冲突的文件名会追加 <code>_1</code>、<code>_2</code> 等后缀。表格中冲突的文件会以红色高亮显示。</p>
+  </div>
+
+  <div class="card">
+    <h3>Q: 支持其他 AI 服务商吗？</h3>
+    <p><strong>A:</strong> 支持！目前内置了 DeepSeek、OpenAI、Claude 三个服务商。设置中选择即可切换。只要是 OpenAI 兼容的 API（如 Ollama、vLLM、硅基流动等），也可以通过修改 Base URL 来接入。</p>
+  </div>
+
+  <div class="card">
+    <h3>Q: 文件重命名后还能组织到子文件夹吗？</h3>
+    <p><strong>A:</strong> 可以。在设置的"文件整理"标签页中启用自动归类，选择规则（按日期/类型/分类/项目）和目标根目录即可。</p>
+  </div>
+</section>
+
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<footer>
+  <p><strong>AI File Renamer v0.1.0</strong> — 基于 AI 的智能文件重命名工具</p>
+  <p>
+    <a href="https://github.com/666lws666/AI-File-Renamer">GitHub</a> &nbsp;·&nbsp;
+    <a href="https://platform.deepseek.com">DeepSeek API</a> &nbsp;·&nbsp;
+    MIT License
+  </p>
+</footer>
+
+</body>
+</html>
