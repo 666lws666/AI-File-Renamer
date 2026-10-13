@@ -1,0 +1,32 @@
+# Compact local naming diagnostic
+
+Execute with subagent-driven-development and TDD. Root owns real inference and content review.
+
+**Goal:** verify a smaller model-facing response shape that produces useful names rather than copying document body clauses into optional naming fields.
+
+**Evidence:** At `de135c9a7e599a16236a76443739339a393d1ccd`, real case01 and case04 both retained repeated entities and three over-elaborate context entries despite explicit generic omission advice. Text evidence IDs now work correctly. Preserve these failed-quality outputs; do not relabel them as passes.
+
+**Selected design:** one content-bearing `topic` plus optional evidenced `date` and `version`; the topic itself includes any important object, project or organization needed to distinguish the content. This is not template selection: the model still understands actual mixed content and freely summarizes its meaningful distinguishing facts. Date/version remain optional; source precision and all common policy checks remain enforced. Local rendering keeps date-topic-version order, underscores and selected language. No generated value is truncated, sanitized or repaired.
+
+Alternatives considered: more omission reminders already failed twice; silently deleting repetitive model parts would alter meaning; a second generative cleanup pass adds latency and another grounding boundary before this simpler protocol has been measured. The compact protocol is a diagnostic experiment, not a product migration or a claim of final semantic success.
+
+## Task 1: bounded compact response profile
+
+Base: `de135c9a7e599a16236a76443739339a393d1ccd`. Existing isolated branch only.
+
+**Owned files:** `scripts/run_local_inference_probe.py`, `tests/unit/test_local_inference_probe.py`, new `docs/reports/2026-09-13-local-compact-naming.md`.
+
+**Constraints:** no src, QML, Provider, config, original corpus, runtime/model flags or resources, Golden, prior raw evidence or other files changed. No model execution, network, credentials or Git writes by implementer. Root preserves the current checkpoint and handles actual inference. Existing text evidence bank, byte limits, process lifecycle, memory guards, source hashes and modality restrictions remain unchanged.
+
+**Interfaces:** retain `run_case`, `local_schema`, `decode_response`, `text_evidence_spans` signatures. Add fixed `DIAGNOSTIC_PROTOCOL = 'local-summary-v2'` and persist it plus the executing runner file SHA256 in every post-preparation result. This version is distinct from the unchanged common SmartNamingPolicy version.
+
+- [x] RED: true schema requires topic, permits only optional date/version, has no entity/context properties. Decoder explicitly rejects entity/context and arbitrary unknown fields rather than dropping them. False branch stays exactly understood/language.
+- [x] Constrain topic to at most64 UTF-16 units for zh-CN/zh-HK and120 for en-US; date at most21 (an ISO day-precision range), version at most24. Set matching conservative JSON Schema maxLength and enforce UTF-16 bounds in decoder (schema code-point bounds alone are not enough for astral characters). Existing common 180-unit final stem limit stays intact. Return invalid response on overlong output, never slice strings.
+- [x] Text evidence is still a registered current-bank ID; visual evidence is still an actual observation. Resolve text IDs exactly, then adapt allowed roles into unchanged common parts. Do not change values or invent absent fields. All exact-original, unknown-reference, source-modality and date-precision tests remain.
+- [x] Replace the diagnostic's model-facing prompt with a concise explicit compact contract, rather than leaving contradictory instructions about unused roles. Explain: summarize the specific object/topic/purpose; include useful supported distinguishing entity/time-range/version details once; do not enumerate procedures, results, room lists or all captions; optional fields are not a checklist. Suggested title size is a useful phrase, not prose (roughly12–30 CJK characters or5–12 English words when content permits); the formal maximum is a rejection bound, not a target. No case-specific answers/examples, source basenames/paths or reviewer oracle. Include selected language, untrusted-fragment instructions, exact text IDs, actual-visual observations, insufficient-content refusal, supported numerical date precision, no file extension/path, no thoughts/fences/prose and no invented facts. Prepared text appears only in its bank; visual-only input contains no fabricated text.
+- [x] Preserve old negative tests for unsafe names, wrong locale, date precision, strict JSON/prose/duplicates, raw output, cancellation/memory guards and visual branch. Update only expectations intentionally changed by this compact profile; tests now explicitly reject formerly allowed entity/context. Add role-length boundaries, astral UTF-16 boundary, repeated source reference without value rewriting, refusal, and result protocol/runner hash assertions.
+- [x] Restore explicit `run_case` policy-failure integration coverage flagged in the prior review: a valid zh-CN response with topic `报告` and registered `T000` must reach SmartNamingPolicy and return `smart.error.genericName`, retain decoded parts/raw bytes/result, and remain unaccepted. Do not count unknown-ID/locale protocol rejection as this coverage. Prior whitespace-only chunk/self-consistency and pre-bank failure-reporting issues stay documented P2 backlog; do not expand this task into a full runner error refactor.
+- [x] GREEN: `python -m pytest tests/unit/test_local_inference_probe.py tests/unit/test_smart_naming.py -q`. Then all five local diagnostic files. Use generated temporary corpus and mocked model process only. No real model call by implementer. Freeze runner/tests as soon as focused GREEN is ready so root can promptly run the actual model; report may finish afterward.
+- [x] Record RED/GREEN original summaries and exact scope in the report; do not claim semantic success. Freeze all three files without Git writes. Root reviews and serially tests case01/04 then the three-language/media matrix using current RAM safety gate.
+
+The actual acceptance remains accurate, distinctive, concise names, absent facts not invented, language consistency, refusal on unreadable content, safe lengths/extensions and real source/visual comparison. This profile does not itself satisfy that acceptance.

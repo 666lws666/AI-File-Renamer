@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "purpose": "managed-local-resources-v1",
+  "model_id": "Qwen/Qwen3.5-4B",
+  "source_revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+  "quantization_repository": "unsloth/Qwen3.5-4B-GGUF",
+  "quantization_revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+  "checked_at": "2026-09-13",
+  "model_license": "Apache-2.0",
+  "runtime_license": "MIT",
+  "runtime_release": "b10885",
+  "resources": [
+    {"id": "runtime-cpu", "filename": "llama-b10885-bin-win-cpu-x64.zip", "url": "https://github.com/ggml-org/llama.cpp/releases/download/b10885/llama-b10885-bin-win-cpu-x64.zip", "bytes": 18425079, "sha256": "b96fd3b2dfa7add41b0d80f93599931d839b54b4b804abc4b295bd4039dc96f1"},
+    {"id": "model-q4", "filename": "Qwen3.5-4B-Q4_K_M.gguf", "url": "https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/e87f176479d0855a907a41277aca2f8ee7a09523/Qwen3.5-4B-Q4_K_M.gguf", "bytes": 2740937888, "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4"},
+    {"id": "vision-f16", "filename": "mmproj-F16.gguf", "url": "https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/e87f176479d0855a907a41277aca2f8ee7a09523/mmproj-F16.gguf", "bytes": 672423616, "sha256": "cd88edcf8d031894960bb0c9c5b9b7e1fea6ebee02b9f7ce925a00d12891f864"}
+  ],
+  "sources": [
+    "https://huggingface.co/Qwen/Qwen3.5-4B/blob/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/LICENSE",
+    "https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/tree/e87f176479d0855a907a41277aca2f8ee7a09523",
+    "https://github.com/ggml-org/llama.cpp/releases/expanded_assets/b10885",
+    "https://github.com/ggml-org/llama.cpp/blob/b10885/LICENSE"
+  ]
+}

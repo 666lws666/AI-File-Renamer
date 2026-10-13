@@ -1,0 +1,1706 @@
+{
+  "platform": "windows",
+  "font_requested": "Microsoft YaHei UI",
+  "font_actual": "Microsoft YaHei UI",
+  "cjk": {
+    "characters": "序匣批量重命名待确认应用失败取消忽略",
+    "total_characters": 18,
+    "unique_pixel_hashes": 18,
+    "all_have_non_background_pixels": true,
+    "passed": true
+  },
+  "synthetic_examples": true,
+  "real_model_quality_verified": false,
+  "privacy_scan": {
+    "passed": true,
+    "checked_count": 5
+  },
+  "cases": [
+    {
+      "case_id": "zh-CN:navigation",
+      "locale": "zh-CN",
+      "filename": "zh-CN/01-navigation.png",
+      "width": 1125,
+      "height": 800,
+      "size_bytes": 105376,
+      "sha256": "f802ef2f467b12b8b96b53eea884e9f923e0a1b6c289cc8c0e50b947cae76ba7",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "pageRouter",
+          "property": "currentPage",
+          "actual": "batch",
+          "expected": "batch"
+        },
+        {
+          "object": "windowBoundary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 132.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 432.0,
+          "y": 66.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 512.0,
+          "y": 66.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 604.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 632.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 724.0,
+          "y": 130.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 804.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-CN:provider-settings",
+      "locale": "zh-CN",
+      "filename": "zh-CN/02-provider-settings.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 109840,
+      "sha256": "23ca4a6d465d29af952bba656b6fe56d1949281d51869fc0af905a0836f77b44",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "preferencesPage",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "providerForm",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-CN:batch-empty",
+      "locale": "zh-CN",
+      "filename": "zh-CN/03-batch-empty.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 107613,
+      "sha256": "8585e516e3d9d5ea7ce14341687b6727bb11b786a6fde80c1705f0287fdd2cb1",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "batchDropZone",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "windowBoundary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 132.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 432.0,
+          "y": 66.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 512.0,
+          "y": 66.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 604.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 732.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 824.0,
+          "y": 130.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 904.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-CN:batch-review",
+      "locale": "zh-CN",
+      "filename": "zh-CN/04-batch-review.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 150841,
+      "sha256": "1b802d57b5aec15acf9394d189195e006dac6799807d77b1d4c4ae75236ef46d",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "batchTaskQueue",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 132.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 432.0,
+          "y": 66.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 512.0,
+          "y": 66.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 604.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 732.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 824.0,
+          "y": 130.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 904.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-CN:inline-edit",
+      "locale": "zh-CN",
+      "filename": "zh-CN/05-inline-edit.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 140834,
+      "sha256": "efef8a9b927bd6c86afb83f9b2465b2042a38ca44ae89f9996fa893f6b907f52",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "batchTaskQueue[2].inlineNameField",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "windowBoundary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-CN:watch-create",
+      "locale": "zh-CN",
+      "filename": "zh-CN/06-watch-create.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 115129,
+      "sha256": "abb90d0e6a20f7d40c85d0ee46ef24abed4faf53f34018968723377663b2c61b",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "watchPage",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "watchForm",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-CN:watch-results",
+      "locale": "zh-CN",
+      "filename": "zh-CN/07-watch-results.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 74969,
+      "sha256": "9602910e0dc08edd1f36c606e5b57651cc27321db1c0930fba614fd0a56f6b0f",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "watchResultsPanel",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "watchResultsList",
+          "property": "count",
+          "actual": 1,
+          "expected": 1
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-CN:templates",
+      "locale": "zh-CN",
+      "filename": "zh-CN/08-templates.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 164952,
+      "sha256": "2640828e444dc17b08edd26e246d6d2b19f77940098f8b3a5da8df0f6151aaa7",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "templatesPage",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "templateList",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-CN:vocabulary",
+      "locale": "zh-CN",
+      "filename": "zh-CN/09-vocabulary.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 140931,
+      "sha256": "684eede054151227b6922285e585d9774120e71e784214da6a39920b95e2c9f8",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "templatesPage",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "vocabularyTab",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-CN:system-status",
+      "locale": "zh-CN",
+      "filename": "zh-CN/10-system-status.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 138200,
+      "sha256": "f51f226694d10c995244fc65b8ce7b63b4955390543f72dcb539512d43023122",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "systemStatusModal",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "windowBoundary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-CN:naming-mode",
+      "locale": "zh-CN",
+      "filename": "zh-CN/11-naming-mode.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 116034,
+      "sha256": "d017dfb685230050fa5a60073ab3fdd84b85f524533f0998beb92350a12aa505",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "batchSmartNamingGuidance",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 132.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 432.0,
+          "y": 66.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 512.0,
+          "y": 66.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 604.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 732.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 824.0,
+          "y": 130.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 904.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-CN:filename-language",
+      "locale": "zh-CN",
+      "filename": "zh-CN/12-filename-language.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 146935,
+      "sha256": "25514cb49f93e383c610c89435d7c3a0195b6cd2ac5a62d3b2afeaac14f86214",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "namingLanguageDialog",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "namingSmartSummary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 132.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 432.0,
+          "y": 66.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 512.0,
+          "y": 66.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 604.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 732.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 824.0,
+          "y": 130.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 904.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-HK:navigation",
+      "locale": "zh-HK",
+      "filename": "zh-HK/01-navigation.png",
+      "width": 1125,
+      "height": 800,
+      "size_bytes": 115628,
+      "sha256": "1ac0f3232364b431a19a096d7e71715055d668282a9082c12dda0b84d27196b2",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "pageRouter",
+          "property": "currentPage",
+          "actual": "batch",
+          "expected": "batch"
+        },
+        {
+          "object": "windowBoundary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 132.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 432.0,
+          "y": 66.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 512.0,
+          "y": 66.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 604.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 632.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 724.0,
+          "y": 130.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 804.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-HK:provider-settings",
+      "locale": "zh-HK",
+      "filename": "zh-HK/02-provider-settings.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 111777,
+      "sha256": "2771701aa5c83aef25441e4cdc5e6869e6e16d1e85606fdd98da75ece3f11cda",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "preferencesPage",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "providerForm",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-HK:batch-empty",
+      "locale": "zh-HK",
+      "filename": "zh-HK/03-batch-empty.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 117456,
+      "sha256": "2373d770511fb978ca5758749ce44c49b7a80c7e81caead58d68ffca38a72944",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "batchDropZone",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "windowBoundary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 132.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 432.0,
+          "y": 66.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 512.0,
+          "y": 66.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 604.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 732.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 824.0,
+          "y": 130.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 904.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-HK:batch-review",
+      "locale": "zh-HK",
+      "filename": "zh-HK/04-batch-review.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 159295,
+      "sha256": "c6111bb2b75a21a2ff26843acefbe7a8e1f6250ed69ea3836ac0d17fa6701255",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "batchTaskQueue",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 132.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 432.0,
+          "y": 66.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 512.0,
+          "y": 66.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 604.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 732.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 824.0,
+          "y": 130.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 904.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-HK:inline-edit",
+      "locale": "zh-HK",
+      "filename": "zh-HK/05-inline-edit.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 148538,
+      "sha256": "ac7d363e5b9bc4019656775c4db8b89459e3b101556e53b3be6727222f98357d",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "batchTaskQueue[2].inlineNameField",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "windowBoundary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-HK:watch-create",
+      "locale": "zh-HK",
+      "filename": "zh-HK/06-watch-create.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 125677,
+      "sha256": "66d0d6b6668e29696cdb7b4ef54f9d419fb534736bf461d0c66ff00125a21f1c",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "watchPage",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "watchForm",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-HK:watch-results",
+      "locale": "zh-HK",
+      "filename": "zh-HK/07-watch-results.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 77746,
+      "sha256": "15fc88d2a9c37b9e4bdd25e11d817f8642c8c8829b729b8cae1e389c1778ce08",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "watchResultsPanel",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "watchResultsList",
+          "property": "count",
+          "actual": 1,
+          "expected": 1
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-HK:templates",
+      "locale": "zh-HK",
+      "filename": "zh-HK/08-templates.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 171298,
+      "sha256": "045942a7acd9b8378dd48d6b7faf97b2142dc9c948332f1f0f493088b78da557",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "templatesPage",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "templateList",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-HK:vocabulary",
+      "locale": "zh-HK",
+      "filename": "zh-HK/09-vocabulary.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 145540,
+      "sha256": "c2a8c53d33b901a80f915e3dae9557c3ea2f880a78a55c7052afcc300e9ff2c0",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "templatesPage",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "vocabularyTab",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-HK:system-status",
+      "locale": "zh-HK",
+      "filename": "zh-HK/10-system-status.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 146160,
+      "sha256": "c0032b3a8b56d3b8524b6cab0e2e1f639547cf84bba2ebdf72c35ad9c1631022",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "systemStatusModal",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "windowBoundary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-HK:naming-mode",
+      "locale": "zh-HK",
+      "filename": "zh-HK/11-naming-mode.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 126230,
+      "sha256": "ee422cd8fafcbdd0702fcfb690cd397cdef3ee13910d7f37dcb75505a45ad881",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "batchSmartNamingGuidance",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 132.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 432.0,
+          "y": 66.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 512.0,
+          "y": 66.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 604.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 732.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 824.0,
+          "y": 130.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 904.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "zh-HK:filename-language",
+      "locale": "zh-HK",
+      "filename": "zh-HK/12-filename-language.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 161853,
+      "sha256": "364182ba43bed945f562aa03a78a1aa53c3179f4cd9198627e9e77bbda8d4de0",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "namingLanguageDialog",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "namingSmartSummary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 132.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 432.0,
+          "y": 66.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 512.0,
+          "y": 66.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 604.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 732.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 824.0,
+          "y": 130.0,
+          "width": 72.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 904.0,
+          "y": 130.0,
+          "width": 84.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "en-US:navigation",
+      "locale": "en-US",
+      "filename": "en-US/01-navigation.png",
+      "width": 1125,
+      "height": 800,
+      "size_bytes": 112758,
+      "sha256": "d34aecbaa5d367d0e05d438da10a76bdadbdc45a03483d8d116310c7407612f7",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "pageRouter",
+          "property": "currentPage",
+          "actual": "batch",
+          "expected": "batch"
+        },
+        {
+          "object": "windowBoundary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 152.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 452.0,
+          "y": 66.0,
+          "width": 78.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 538.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 634.0,
+          "y": 66.0,
+          "width": 104.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 570.0,
+          "y": 130.0,
+          "width": 104.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 682.0,
+          "y": 130.0,
+          "width": 82.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 772.0,
+          "y": 130.0,
+          "width": 116.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "en-US:provider-settings",
+      "locale": "en-US",
+      "filename": "en-US/02-provider-settings.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 116127,
+      "sha256": "cff33454a87430761077100fa00353716791447d1e21454b0275b05bc1a13efb",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "preferencesPage",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "providerForm",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "en-US:batch-empty",
+      "locale": "en-US",
+      "filename": "en-US/03-batch-empty.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 115575,
+      "sha256": "cf27183b221f23647968f7c8227a36f1ef2b4c7c222f31b2a688c665bcb32ee4",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "batchDropZone",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "windowBoundary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 152.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 452.0,
+          "y": 66.0,
+          "width": 78.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 538.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 634.0,
+          "y": 66.0,
+          "width": 104.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 670.0,
+          "y": 130.0,
+          "width": 104.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 782.0,
+          "y": 130.0,
+          "width": 82.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 872.0,
+          "y": 130.0,
+          "width": 116.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "en-US:batch-review",
+      "locale": "en-US",
+      "filename": "en-US/04-batch-review.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 146301,
+      "sha256": "b159e4046f738edeb7dffebe4787d1e07f45691f1887feb005c74b1d030de46a",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "batchTaskQueue",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 152.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 452.0,
+          "y": 66.0,
+          "width": 78.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 538.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 634.0,
+          "y": 66.0,
+          "width": 104.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 670.0,
+          "y": 130.0,
+          "width": 104.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 782.0,
+          "y": 130.0,
+          "width": 82.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 872.0,
+          "y": 130.0,
+          "width": 116.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "en-US:inline-edit",
+      "locale": "en-US",
+      "filename": "en-US/05-inline-edit.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 144327,
+      "sha256": "4959ebcdd11663daa765863686e787617c833773b8f10fc0bdd45bb2af710d5a",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "batchTaskQueue[2].inlineNameField",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "windowBoundary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "en-US:watch-create",
+      "locale": "en-US",
+      "filename": "en-US/06-watch-create.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 116309,
+      "sha256": "db64cf90bf750498d9cdc4ea8bdaa350501cd5a31bf530acebb0efc4ff922e02",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "watchPage",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "watchForm",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "en-US:watch-results",
+      "locale": "en-US",
+      "filename": "en-US/07-watch-results.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 74486,
+      "sha256": "1bb5614b9fffa4a7547a1d6e7700c68bcbea4f457cecdbec672fd63abc5f6ce5",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "watchResultsPanel",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "watchResultsList",
+          "property": "count",
+          "actual": 1,
+          "expected": 1
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "en-US:templates",
+      "locale": "en-US",
+      "filename": "en-US/08-templates.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 170117,
+      "sha256": "0a79e63b8f6a0c93c4c9cd50fa6383359c358dc6b3fffd8a7a2d51a03369c897",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "templatesPage",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "templateList",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "en-US:vocabulary",
+      "locale": "en-US",
+      "filename": "en-US/09-vocabulary.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 143905,
+      "sha256": "8697cd0381fe13b321a600eb6fb99f45960703b45d4ac3dc460aa30f5fa157d8",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "templatesPage",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "vocabularyTab",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "en-US:system-status",
+      "locale": "en-US",
+      "filename": "en-US/10-system-status.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 151921,
+      "sha256": "eba2fa25006962f005f1bb0c4ccba456e78ff7b7c517057ef11f6330b88988e9",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "systemStatusModal",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "windowBoundary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "en-US:naming-mode",
+      "locale": "en-US",
+      "filename": "en-US/11-naming-mode.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 114891,
+      "sha256": "3c1ff77e9902eee4ea08914636d89e6e7bf469cfae8d64f0355994df363d0e40",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "batchSmartNamingGuidance",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 152.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 452.0,
+          "y": 66.0,
+          "width": 78.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 538.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 634.0,
+          "y": 66.0,
+          "width": 104.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 670.0,
+          "y": 130.0,
+          "width": 104.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 782.0,
+          "y": 130.0,
+          "width": 82.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 872.0,
+          "y": 130.0,
+          "width": 116.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    },
+    {
+      "case_id": "en-US:filename-language",
+      "locale": "en-US",
+      "filename": "en-US/12-filename-language.png",
+      "width": 1250,
+      "height": 875,
+      "size_bytes": 158329,
+      "sha256": "3f30ea571e52bd2223ef027ac01ee4bf942b5b012183bf1652cbe398f18ce60d",
+      "warnings": [],
+      "assertions": [
+        {
+          "object": "namingLanguageDialog",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        },
+        {
+          "object": "namingSmartSummary",
+          "property": "visible",
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "geometry": [
+        {
+          "object": "batchNamingModeSelector",
+          "x": 92.0,
+          "y": 66.0,
+          "width": 152.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFilesButton",
+          "x": 452.0,
+          "y": 66.0,
+          "width": 78.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchAddFolderButton",
+          "x": 538.0,
+          "y": 66.0,
+          "width": 88.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchTargetDirectoryButton",
+          "x": 634.0,
+          "y": 66.0,
+          "width": 104.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchApplySelectedButton",
+          "x": 670.0,
+          "y": 130.0,
+          "width": 104.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchStopButton",
+          "x": 782.0,
+          "y": 130.0,
+          "width": 82.0,
+          "height": 32.0
+        },
+        {
+          "object": "batchClearButton",
+          "x": 872.0,
+          "y": 130.0,
+          "width": 116.0,
+          "height": 32.0
+        }
+      ],
+      "synthetic_examples": true,
+      "real_model_quality_verified": false
+    }
+  ]
+}

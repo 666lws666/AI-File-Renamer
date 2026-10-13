@@ -1,0 +1,235 @@
+{
+  "schema_version": 2,
+  "verification_date": "2026-07-29",
+  "providers": [
+    {
+      "provider_id": "deepseek",
+      "verification_date": "2026-09-10",
+      "official_name": "DeepSeek",
+      "developer_portal": "https://api-docs.deepseek.com",
+      "base_url": "https://api.deepseek.com",
+      "base_url_mode": "FIXED",
+      "api_endpoint": "/chat/completions",
+      "auth_method": "Bearer token in Authorization header",
+      "openai_compat_level": "FULL",
+      "capabilities": {
+        "text": true,
+        "vision": true,
+        "multi_image": true,
+        "json_mode": true,
+        "json_schema": false,
+        "streaming": true,
+        "tool_calling": true
+      },
+      "pricing": {
+        "verifiable": false,
+        "currency": null,
+        "unit": null,
+        "models": {},
+        "official_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+        "verification_date": "2026-09-10",
+        "status": "UNKNOWN",
+        "notes": "Outdated numeric prices retired. Monetary pricing is outside the product scope; no replacement estimates are retained."
+      },
+      "conclusion": "VERIFIED",
+      "official_sources": [
+        "https://api-docs.deepseek.com",
+        "https://api-docs.deepseek.com/quick_start/pricing/",
+        "https://api-docs.deepseek.com/guides/vision/",
+        "https://api-docs.deepseek.com/updates/"
+      ],
+      "model_capability_update": {
+        "verification_date": "2026-09-10",
+        "model": "deepseek-flash",
+        "model_version": "DeepSeek-V4.1-Flash",
+        "compatibility_aliases": ["deepseek-v4-flash", "deepseek-v4-flash-vision-exp"],
+        "status": "VERIFIED",
+        "text": true,
+        "vision": true,
+        "multi_image": true,
+        "json_mode": true,
+        "json_schema": false,
+        "notes": "Canonical Flash and both exact legacy aliases route to V4.1 Flash. V4 Pro remains text-only in this dated snapshot; the announced 2026-09-14 transition is not enabled preemptively. Images use user image_url inline data; scan pages and 4-8 video keyframes are prepared locally. Local limits remain conservative; no full PDF/video or source path upload. Existing saved selections are not rewritten. No account/API call was made."
+      }
+    },
+    {
+      "provider_id": "qwen",
+      "official_name": "Qwen / Tongyi Qianwen (Alibaba Cloud DashScope)",
+      "developer_portal": "https://help.aliyun.com/zh/model-studio/",
+      "base_url": null,
+      "base_url_mode": "REGIONAL",
+      "region_required": true,
+      "workspace_id_required_by_region": true,
+      "regional_endpoints": {
+        "beijing": "https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
+        "singapore": "https://{WorkspaceId}.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1",
+        "tokyo": "https://{WorkspaceId}.ap-northeast-1.maas.aliyuncs.com/compatible-mode/v1",
+        "frankfurt": "https://{WorkspaceId}.eu-central-1.maas.aliyuncs.com/compatible-mode/v1",
+        "virginia": "https://dashscope-us.aliyuncs.com/compatible-mode/v1"
+      },
+      "api_endpoint": "/chat/completions",
+      "auth_method": "Bearer token (DASHSCOPE_API_KEY) in Authorization header",
+      "openai_compat_level": "FULL",
+      "capabilities": {
+        "text": true,
+        "vision": true,
+        "multi_image": true,
+        "json_mode": true,
+        "json_schema": false,
+        "streaming": true,
+        "tool_calling": true
+      },
+      "json_schema_status": "UNVERIFIED",
+      "pricing": {
+        "verifiable": false,
+        "currency": null,
+        "unit": null,
+        "models": {},
+        "official_url": "https://help.aliyun.com/zh/model-studio/models",
+        "verification_date": "2026-07-29",
+        "status": "UNKNOWN",
+        "notes": "Official catalog confirms region/workspace endpoints and model IDs, but this report does not retain numeric prices without an exact region-specific price table."
+      },
+      "conclusion": "PARTIAL",
+      "official_sources": [
+        "https://help.aliyun.com/zh/model-studio/qwen-api-via-dashscope",
+        "https://help.aliyun.com/zh/model-studio/models",
+        "https://help.aliyun.com/zh/model-studio/qwen-structured-output"
+      ]
+    },
+    {
+      "provider_id": "mimo",
+      "official_name": "Xiaomi MiMo",
+      "developer_portal": "https://platform.xiaomimimo.com/",
+      "base_url": "https://api.xiaomimimo.com/v1",
+      "base_url_mode": "FIXED",
+      "api_endpoint": "/chat/completions",
+      "auth_method": "API key in api-key header",
+      "openai_compat_level": "FULL",
+      "capabilities": {
+        "text": true,
+        "vision": true,
+        "multi_image": false,
+        "json_mode": true,
+        "json_schema": false,
+        "streaming": true,
+        "tool_calling": true
+      },
+      "capability_scope": "MODEL_SPECIFIC",
+      "json_mode_models": ["mimo-v2.5", "mimo-v2.5-pro"],
+      "pricing": {
+        "verifiable": false,
+        "currency": null,
+        "unit": null,
+        "models": {},
+        "official_url": "https://platform.xiaomimimo.com/",
+        "verification_date": "2026-07-29",
+        "status": "UNKNOWN",
+        "notes": "Structured-output support is verified for MiMo v2.5 and v2.5 Pro; numeric prices were not retained without an exact official price table."
+      },
+      "conclusion": "PARTIAL",
+      "blockers": ["json_schema capability not confirmed from official docs"],
+      "official_sources": [
+        "https://platform.xiaomimimo.com/",
+        "https://mimo.mi.com/docs/en-US/quick-start/usage-guide/text-generation/structured-output"
+      ]
+    },
+    {
+      "provider_id": "zhipu",
+      "official_name": "Zhipu AI / GLM (BigModel)",
+      "developer_portal": "https://docs.bigmodel.cn/",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "base_url_mode": "FIXED",
+      "api_endpoint": "/chat/completions",
+      "auth_method": "Bearer token in Authorization header",
+      "openai_compat_level": "FULL",
+      "capabilities": {
+        "text": true,
+        "vision": true,
+        "multi_image": true,
+        "json_mode": true,
+        "json_schema": false,
+        "streaming": true,
+        "tool_calling": true
+      },
+      "pricing": {
+        "verifiable": false,
+        "currency": null,
+        "unit": null,
+        "models": {},
+        "official_url": "https://docs.bigmodel.cn/",
+        "verification_date": "2026-07-29",
+        "status": "UNKNOWN",
+        "notes": "API endpoint and capabilities were reviewed separately; numeric pricing remains unknown until an exact official model-price table is captured."
+      },
+      "conclusion": "PARTIAL",
+      "official_sources": [
+        "https://docs.bigmodel.cn/cn/guide/develop/http/introduction",
+        "https://docs.bigmodel.cn/api-reference/"
+      ]
+    },
+    {
+      "provider_id": "kimi",
+      "official_name": "Kimi / Moonshot AI",
+      "developer_portal": "https://platform.kimi.ai/docs",
+      "base_url": "https://api.moonshot.ai/v1",
+      "base_url_mode": "FIXED",
+      "api_endpoint": "/chat/completions",
+      "auth_method": "Bearer token (sk-...) in Authorization header",
+      "openai_compat_level": "FULL",
+      "capabilities": {
+        "text": true,
+        "vision": true,
+        "multi_image": true,
+        "json_mode": true,
+        "json_schema": true,
+        "streaming": true,
+        "tool_calling": true
+      },
+      "pricing": {
+        "verifiable": false,
+        "currency": null,
+        "unit": null,
+        "models": {},
+        "official_url": "https://platform.kimi.ai/docs",
+        "verification_date": "2026-07-29",
+        "status": "UNKNOWN",
+        "notes": "The current API endpoint and JSON response formats are verified; numeric pricing remains unknown without an exact official pricing table."
+      },
+      "conclusion": "PARTIAL",
+      "official_sources": [
+        "https://platform.kimi.ai/docs",
+        "https://platform.kimi.ai/docs/api/chat"
+      ]
+    }
+  ],
+  "model_name_checks": [
+    {
+      "model_name": "deepseek-v4-flash",
+      "conclusion": "VERIFIED_API_MODEL",
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "notes": "Listed alongside deepseek-v4-pro. deepseek-chat deprecated 2026-07-24."
+    },
+    {
+      "model_name": "qwen3.6-flash",
+      "conclusion": "VERIFIED_API_MODEL",
+      "source": "https://help.aliyun.com/zh/model-studio/models",
+      "notes": "Listed in DashScope catalog as multimodal model"
+    },
+    {
+      "model_name": "qwen3.7-plus",
+      "conclusion": "VERIFIED_API_MODEL",
+      "source": "https://help.aliyun.com/zh/model-studio/models",
+      "notes": "Latest flagship multimodal model"
+    }
+  ],
+  "official_source_domains": [
+    "api-docs.deepseek.com",
+    "help.aliyun.com",
+    "platform.xiaomimimo.com",
+    "mimo.mi.com",
+    "docs.bigmodel.cn",
+    "platform.kimi.ai"
+  ],
+  "overall_gate": "PARTIAL"
+}

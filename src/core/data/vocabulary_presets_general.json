@@ -1,0 +1,280 @@
+{
+  "version": 2,
+  "description": "General vocabulary presets for personal document management — subjects and types with zh/en display names.",
+  "entries": [
+    {
+      "category": "subject",
+      "concept_id": "subject.personal",
+      "display_name": "Personal",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.personal",
+      "display_name": "个人",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.finance",
+      "display_name": "Finance",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.finance",
+      "display_name": "财务",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.legal",
+      "display_name": "Legal",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.legal",
+      "display_name": "法律",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.health",
+      "display_name": "Health",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.health",
+      "display_name": "健康",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.learning",
+      "display_name": "Learning",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.learning",
+      "display_name": "学习",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.research",
+      "display_name": "Research",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.research",
+      "display_name": "研究",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.travel",
+      "display_name": "Travel",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.travel",
+      "display_name": "旅行",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.home",
+      "display_name": "Home",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "subject",
+      "concept_id": "subject.home",
+      "display_name": "居家",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.invoice",
+      "display_name": "Invoice",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.invoice",
+      "display_name": "发票",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.receipt",
+      "display_name": "Receipt",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.receipt",
+      "display_name": "收据",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.statement",
+      "display_name": "Statement",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.statement",
+      "display_name": "对账单",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.contract",
+      "display_name": "Contract",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.contract",
+      "display_name": "合同",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.proposal",
+      "display_name": "Proposal",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.proposal",
+      "display_name": "提案",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.report",
+      "display_name": "Report",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.report",
+      "display_name": "报告",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.presentation",
+      "display_name": "Presentation",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.presentation",
+      "display_name": "演示文稿",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.meeting-note",
+      "display_name": "Meeting Note",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.meeting-note",
+      "display_name": "会议记录",
+      "locale": "zh",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.minutes",
+      "display_name": "Minutes",
+      "locale": "en",
+      "source": "system"
+    },
+    {
+      "category": "type",
+      "concept_id": "type.minutes",
+      "display_name": "会议纪要",
+      "locale": "zh",
+      "source": "system"
+    },
+    {"category": "organization", "concept_id": "organization.personal", "display_name": "Personal", "locale": "en", "source": "system"},
+    {"category": "organization", "concept_id": "organization.personal", "display_name": "个人", "locale": "zh", "source": "system"},
+    {"category": "organization", "concept_id": "organization.family", "display_name": "Family", "locale": "en", "source": "system"},
+    {"category": "organization", "concept_id": "organization.family", "display_name": "家庭", "locale": "zh", "source": "system"},
+    {"category": "organization", "concept_id": "organization.employer", "display_name": "Employer", "locale": "en", "source": "system"},
+    {"category": "organization", "concept_id": "organization.employer", "display_name": "工作单位", "locale": "zh", "source": "system"},
+    {"category": "organization", "concept_id": "organization.school", "display_name": "School", "locale": "en", "source": "system"},
+    {"category": "organization", "concept_id": "organization.school", "display_name": "学校", "locale": "zh", "source": "system"},
+    {"category": "organization", "concept_id": "organization.government", "display_name": "Government", "locale": "en", "source": "system"},
+    {"category": "organization", "concept_id": "organization.government", "display_name": "政府机构", "locale": "zh", "source": "system"},
+    {"category": "organization", "concept_id": "organization.vendor", "display_name": "Vendor", "locale": "en", "source": "system"},
+    {"category": "organization", "concept_id": "organization.vendor", "display_name": "供应商", "locale": "zh", "source": "system"},
+    {"category": "project", "concept_id": "project.general", "display_name": "General", "locale": "en", "source": "system"},
+    {"category": "project", "concept_id": "project.general", "display_name": "通用", "locale": "zh", "source": "system"},
+    {"category": "project", "concept_id": "project.personal", "display_name": "Personal", "locale": "en", "source": "system"},
+    {"category": "project", "concept_id": "project.personal", "display_name": "个人项目", "locale": "zh", "source": "system"},
+    {"category": "project", "concept_id": "project.work", "display_name": "Work", "locale": "en", "source": "system"},
+    {"category": "project", "concept_id": "project.work", "display_name": "工作项目", "locale": "zh", "source": "system"},
+    {"category": "project", "concept_id": "project.study", "display_name": "Study", "locale": "en", "source": "system"},
+    {"category": "project", "concept_id": "project.study", "display_name": "学习", "locale": "zh", "source": "system"},
+    {"category": "project", "concept_id": "project.home", "display_name": "Home", "locale": "en", "source": "system"},
+    {"category": "project", "concept_id": "project.home", "display_name": "家庭事务", "locale": "zh", "source": "system"},
+    {"category": "project", "concept_id": "project.research", "display_name": "Research", "locale": "en", "source": "system"},
+    {"category": "project", "concept_id": "project.research", "display_name": "研究", "locale": "zh", "source": "system"},
+    {"category": "status", "concept_id": "status.draft", "display_name": "Draft", "locale": "en", "source": "system"},
+    {"category": "status", "concept_id": "status.draft", "display_name": "草稿", "locale": "zh", "source": "system"},
+    {"category": "status", "concept_id": "status.review", "display_name": "In Review", "locale": "en", "source": "system"},
+    {"category": "status", "concept_id": "status.review", "display_name": "审核中", "locale": "zh", "source": "system"},
+    {"category": "status", "concept_id": "status.approved", "display_name": "Approved", "locale": "en", "source": "system"},
+    {"category": "status", "concept_id": "status.approved", "display_name": "已批准", "locale": "zh", "source": "system"},
+    {"category": "status", "concept_id": "status.final", "display_name": "Final", "locale": "en", "source": "system"},
+    {"category": "status", "concept_id": "status.final", "display_name": "定稿", "locale": "zh", "source": "system"},
+    {"category": "status", "concept_id": "status.pending", "display_name": "Pending", "locale": "en", "source": "system"},
+    {"category": "status", "concept_id": "status.pending", "display_name": "待处理", "locale": "zh", "source": "system"},
+    {"category": "status", "concept_id": "status.archived", "display_name": "Archived", "locale": "en", "source": "system"},
+    {"category": "status", "concept_id": "status.archived", "display_name": "已归档", "locale": "zh", "source": "system"}
+  ]
+}

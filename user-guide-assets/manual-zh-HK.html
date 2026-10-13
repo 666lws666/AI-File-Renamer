@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>序匣 1.0.0 使用者手冊</title>
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body id="top">
+  <header class="hero">
+    <div class="brand-line"><span class="brand-mark" aria-hidden="true">序</span><h1>序匣使用者手冊</h1></div>
+    <p>使用 AI 理解檔案內容並提出清晰名稱；由您審核後，才安全地重新命名、移動或持續監控檔案。</p>
+    <span class="version">適用於序匣 1.0.0 · Windows 桌面版</span><br>
+    <nav class="language-switch" aria-label="手冊語言">
+      <a href="../序匣用户手册.html" lang="zh-CN">简体中文</a>
+      <a href="#top" aria-current="page" lang="zh-HK">繁體中文（香港）</a>
+      <a href="manual-en-US.html" lang="en-US">English</a>
+    </nav>
+    <button class="print-button" type="button" onclick="window.print()">列印或另存為 PDF</button>
+  </header>
+  <div class="layout">
+    <nav class="toc" aria-label="手冊目錄"><strong>目錄</strong><ol>
+      <li><a href="#overview">認識序匣</a></li><li><a href="#before-start">開始之前</a></li>
+	      <li><a href="#provider">設定雲端 AI</a></li><li><a href="#navigation">介面導覽</a></li>
+      <li><a href="#quickstart">五分鐘快速上手</a></li><li><a href="#batch">批次命名</a></li>
+      <li><a href="#states">任務狀態</a></li><li><a href="#watch">監控資料夾</a></li>
+      <li><a href="#templates">範本與受控詞彙</a></li><li><a href="#multimodal">圖片、掃描檔與影片</a></li>
+      <li><a href="#limits">資源、快取與用量</a></li><li><a href="#privacy">私隱與資料流程</a></li>
+      <li><a href="#undo">撤銷（Undo）與檔案安全</a></li><li><a href="#troubleshooting">疑難排解</a></li>
+      <li><a href="#formats">支援格式</a></li><li><a href="#faq">常見問題</a></li>
+      <li><a href="#version">版本與支援界線</a></li>
+	      <li><a href="#local-mode">本機私隱與資源準備</a></li>
+    </ol></nav>
+    <main>
+      <section class="chapter" id="overview">
+        <h2>1. 認識序匣</h2>
+        <p class="lead">序匣適合整理下載資料、單據、項目文件、相片、掃描檔和影片素材。它把「產生建議」與「修改檔案」分開：只有獲准的應用操作才會把名稱寫入磁碟。</p>
+        <div class="grid">
+          <div class="mini-card"><h3>它可以做甚麼</h3><ul>
+            <li>讀取支援檔案的文字、中繼資料和可用視覺內容。</li>
+	            <li>透過已就緒的本機模型，或您明確選擇的雲端 AI Provider 取得結構化欄位或有依據的智能名稱。</li>
+            <li>按範本組合精確欄位，或按上下文產生具體摘要；兩種模式均可手動修改。</li>
+            <li>逐一重新命名或移動檔案，並保存成功操作的撤銷（Undo）記錄。</li>
+            <li>監控指定資料夾，把新檔案送往先審核或受保護的自動處理流程。</li>
+          </ul></div>
+          <div class="mini-card"><h3>它不會暗中做甚麼</h3><ul>
+            <li>匯入、擷取、產生或編輯建議時，不會修改磁碟上的檔案名稱。</li>
+            <li>不會要求同時設定多個 Provider。</li>
+            <li>不會把 API Key 寫入一般設定檔。</li>
+            <li>不會為視覺分析上載完整影片。</li>
+            <li>不會把「清空工作區」當作撤銷（Undo）。</li>
+          </ul></div>
+        </div>
+        <div class="callout warning"><strong>先以可還原副本熟習流程</strong>首次使用請準備數個測試檔案，確認命名模式、輸出語言、目的地和建議品質後，再處理重要資料。</div>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="before-start">
+        <h2>2. 開始之前</h2>
+        <ol class="steps">
+          <li><strong>確認環境。</strong>使用支援的 Windows 桌面系統，並確保目前 Windows 帳戶可讀寫來源及目的資料夾。</li>
+	          <li><strong>選擇處理方式。</strong>本機私隱毋須 Provider 帳戶或測試連線，先按本機章節準備資源。只有雲端 AI 才需要向服務商取得 API Key、可用模型名稱及 Base URL，能力須配合內容。</li>
+	          <li><strong>準備網絡或離線資源。</strong>掃描、文字擷取、關鍵影格和檔案操作在本機進行；雲端請求須連接所選 Provider。首次下載公開本機資源仍須另行同意聯網，也可匯入規定的離線資源。</li>
+          <li><strong>啟動程式。</strong>開啟安裝資料夾內的 <code>Xuxia.exe</code>，毋須安裝開發工具或使用命令列。</li>
+        </ol>
+        <div class="callout privacy"><strong>憑證界線</strong>API Key 經 Windows 認證管理員保存；一般設定檔只保留 Provider、模型、品質及資源限制等非機密選項。</div>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="provider">
+	        <h2>3. 設定雲端 AI</h2>
+	        <p>本章只適用於雲端 AI；本機私隱毋須設定雲端帳戶。雲端同一時間只使用一個<strong>目前 Provider</strong>。您可以保存多個候選設定，但雲端處理只採用明確標示為目前使用的設定。</p>
+        <ol class="steps">
+          <li>開啟左側導覽底部的<strong>設定</strong>。</li>
+          <li>選擇內置 Provider 預設，或以 Custom 新增相容服務。</li>
+          <li>輸入服務商提供的 Base URL、模型名稱和 API Key，並移除多餘空格。</li>
+          <li>選擇<strong>測試連線</strong>；固定的最小請求會核對地址、認證和模型存取權。</li>
+          <li>測試成功後儲存並設為目前 Provider。連線欄位變更後須再次測試。</li>
+        </ol>
+        <div class="table-wrap"><table>
+          <thead><tr><th>能力標籤</th><th>意思</th><th>不支援時</th></tr></thead>
+          <tbody>
+            <tr><td>文字</td><td>可使用文件擷取文字及中繼資料</td><td>不能根據該文件內容命名</td></tr>
+            <tr><td>圖片／掃描檔</td><td>可接收縮小圖片或本機轉譯掃描頁</td><td>只使用本機文字及中繼資料，或改用相容 Provider</td></tr>
+            <tr><td>結構化輸出</td><td>可傳回命名策略要求的受限資料</td><td>任務顯示失敗或能力問題，不會假裝成功</td></tr>
+            <tr><td>影片</td><td>可把本機選取的影片影格當作圖片分析</td><td>不能分析畫面，也不會改為上載完整影片</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout tip"><strong>模型目錄會變動</strong>預設提供常用設定入口和能力標籤，不保證某個模型永久對您的帳戶可用。請以服務商目前的模型目錄、帳戶權限及測試連線結果為準；第三方網關或自訂模型不能單憑名稱推斷能力。</div>
+        <figure class="shot"><img src="zh-HK/02-provider-settings.png" alt="繁體中文設定頁顯示 Provider 能力標籤及編輯表格"><figcaption>設定：先核對能力，再填寫地址、模型和憑證；畫面使用隔離示範資料。</figcaption></figure>
+        <div class="callout error"><strong>連線失敗時不要重複儲存</strong>認證失敗通常涉及 Key、權限、模型或地址；429 是服務端限流；逾時則先檢查網絡、代理、地址和 Provider 狀態。</div>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="navigation">
+        <h2>4. 介面導覽</h2>
+        <p>主視窗有五個短導覽入口；首三項處理日常工作，最後兩項顯示狀態和設定。</p>
+	        <p>標題列下方的永久處理列選擇雲端 AI 或本機私隱，並顯示就緒情況；它與批次頁的命名模式不同。設定的通用區域之後設有本機資源卡片，詳見本機私隱章節。</p>
+        <div class="grid">
+          <div class="mini-card"><h3>批次命名</h3><p>一次匯入多個檔案，產生建議並在審核後應用。</p></div>
+          <div class="mini-card"><h3>監控資料夾</h3><p>持續監控穩定的新檔案，使用先審核或自動應用。</p></div>
+          <div class="mini-card"><h3>命名範本</h3><p>管理精確欄位範本和受控詞彙。</p></div>
+          <div class="mini-card"><h3>系統狀態</h3><p>查看本機擷取、目前雲端連線和診斷狀態。</p></div>
+          <div class="mini-card"><h3>設定</h3><p>選擇介面語言、Provider、品質、資源、快取、私隱和診斷。</p></div>
+        </div>
+        <figure class="shot"><img src="zh-HK/01-navigation.png" alt="繁體中文序匣主視窗顯示五個短導覽入口"><figcaption>主導覽：批次命名、監控資料夾、命名範本、系統狀態和設定。</figcaption></figure>
+        <p>視窗外圍的幼線標示應用程式邊界，最大化時會隱藏。拖曳標題列空白位置可移動視窗；右上角按鈕用於最小化、最大化或還原，以及關閉。</p>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="quickstart">
+        <h2>5. 五分鐘快速上手</h2>
+        <div class="quick-path" aria-label="快速上手流程"><div>1. 選擇模式</div><div>2. 選語言並匯入</div><div>3. 等候建議</div><div>4. 審核或修改</div><div>5. 應用；需要時撤銷（Undo）</div></div>
+        <ol class="steps">
+          <li>進入<strong>批次命名</strong>，選擇<strong>按範本命名</strong>或 <strong>AI 智能命名</strong>。每次新工作階段的預設仍是按範本命名。</li>
+	          <li>另在標題下的處理列確認雲端 AI 或本機私隱。本機須先完成資源準備並達到 READY；雲端須先完成連線設定。兩種處理方式都支援兩種命名模式。</li>
+          <li>範本模式要選取範本；智能模式不要求通用欄位範本。如需移動檔案，再選目的資料夾。</li>
+          <li>拖入檔案，或選擇新增檔案／資料夾。確認檔案名稱語言後才會匯入；資料夾可遞迴掃描。</li>
+          <li>等候建議，比對粗體建議名稱和灰色原名。使用鉛筆修改；不合法名稱會顯示行內錯誤。</li>
+          <li>應用一個已審核項目，或勾選多項後使用頂部 應用。系統仍逐一處理，所以可能部分成功。</li>
+          <li>結果不合適時使用撤銷（Undo）還原最近合資格操作；清空工作區不會逆轉改名或移動。</li>
+        </ol>
+	        <div class="callout warning"><strong>先審核 是較穩妥的起點</strong>未熟悉所選模型和命名效果前，請讓所有建議先經人手審核。首次本機準備可能較慢，「五分鐘」只是流程指引，不是時間保證。</div>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="batch">
+        <h2>6. 批次命名</h2>
+        <h3>匯入與工作區</h3>
+        <figure class="shot"><img src="zh-HK/03-batch-empty.png" alt="繁體中文批次命名頁顯示拖放區及新增檔案操作"><figcaption>可拖入檔案，或使用新增檔案和新增資料夾按鈕。</figcaption></figure>
+        <p>批次命名可同時匯入多個檔案或資料夾。暫存檔、已知不支援格式和重複項目會被略過，介面會顯示各類數量。匯入後的項目以全寬卡片顯示，並保留匯入當刻的命名選項。</p>
+        <h3>按範本命名與 AI 智能命名</h3>
+        <div class="grid">
+	          <div class="mini-card"><h3>按範本命名</h3><p>所選模型擷取範本指定的精確欄位，序匣再按固定欄位次序、日期格式及分隔符組合名稱。適合單據、合約、項目或其他欄位穩定的資料。</p></div>
+	          <div class="mini-card"><h3>AI 智能命名</h3><p>所選模型根據檔案上下文提出具體、可辨識的短摘要；同一策略令同一批次的內容次序、日期語法及底線格式一致。智能模式不是包含所有欄位的萬用範本。</p></div>
+        </div>
+        <p>切換模式只影響之後匯入的任務；已匯入任務不會隨工具列切換而改變。重新嘗試始終保留匯入時的模式及檔案名稱語言。返回範本模式不會刪除所選範本。已有範本、預設範本和監控資料夾設定不會被遷移或改寫；監控仍使用其原有範本。</p>
+        <figure class="shot"><img src="zh-HK/11-naming-mode.png" alt="繁體中文批次命名工具列顯示兩個命名模式選項"><figcaption>範本與智能模式清楚分開；智能模式同時提示用途及人工審核。</figcaption></figure>
+        <h3>檔案名稱語言</h3>
+        <div class="callout"><strong>介面語言不等於檔案名稱語言</strong><p>介面及手冊提供簡體中文、繁體中文（香港）和英文三種語言；新批次的檔案名稱另可選日文及西班牙文，共五種。範本模式可沿用範本；智能模式必須選擇實際語言，不會把「沿用範本」當作有意義選項。</p><p>取消不會匯入或呼叫 AI。選擇只套用到新任務，不會改寫範本、已有任務、建議或磁碟檔案。重新嘗試沿用任務的語言；公司專名及編號可能合理地保留原文。</p></div>
+        <figure class="shot"><img src="zh-HK/12-filename-language.png" alt="繁體中文匯入確認對話框列出五種檔案名稱語言"><figcaption>匯入前確認檔案名稱語言；它與介面語言及手冊語言互相獨立。</figcaption></figure>
+        <h3>工具列、任務卡和操作</h3>
+        <ul>
+          <li><strong>模式與範本：</strong>模式決定命名策略；範本選擇只在範本模式有關。</li>
+          <li><strong>繼續新增：</strong>保留目前佇列，同時匯入更多項目。</li>
+          <li><strong>目的地：</strong>留空代表原地改名；選擇資料夾代表改名並移動。</li>
+          <li><strong>搜尋及狀態篩選：</strong>只收窄可見卡片，不會刪除隱藏任務。</li>
+          <li><strong>選取：</strong>列勾選框及全選決定下一次批次操作範圍，應先核對數量。</li>
+        </ul>
+        <figure class="shot"><img src="zh-HK/04-batch-review.png" alt="繁體中文批次審核卡顯示多個狀態及建議名稱"><figcaption>原名、建議名及任務狀態在同一卡片內對照。</figcaption></figure>
+        <figure class="shot"><img src="zh-HK/05-inline-edit.png" alt="繁體中文任務卡顯示建議名稱行內編輯器"><figcaption>在應用前修改建議；原檔案副檔名獨立受到保護。</figcaption></figure>
+        <p>停止待處理任務會取消未完成項目。已送往 Provider 的請求可能仍然返回，但已取消任務不會被報告為成功應用。應用 會分別顯示成功和失敗；一個檔案失敗不會回復同批已成功的檔案。</p>
+        <div class="callout error"><strong>智能模式失敗必須審核或重試</strong><p>可讀內容不足、回應格式無效、名稱太籠統、細節沒有依據、語言不符、不安全名稱或策略版本不支援，都會成為可見失敗。序匣不會聲稱已理解或虛構後備名稱。首次失敗不會產生可編輯建議，不能編輯不存在的名稱；請修正內容或 Provider 後重新產生。重新嘗試始終保留匯入時的模式及檔案名稱語言。若要改用範本模式，先從工作區移除失敗任務，再按新模式重新匯入；只切換工具列模式不會改變舊任務。</p><p>智能檔案名稱主體上限為 180 個 UTF-16 單位；過長結果會被拒絕，序匣不會截斷成看似完整的名稱。模擬測試只證明驗證、佇列及錯誤映射等軟件合約，不能證明真實模型總能辨認具體事實或提供可靠證據。只有成功產生的建議才可在應用前編輯和檢查。</p></div>
+        <p><strong>合成例子：</strong><code>2026-09-08_星河公司_網站改版_需求評審_V2.docx</code>、<code>海港日落_低角度逆光_慢鏡頭.mp4</code>。範例為合成示範結果，不是真實模型截圖，也不是輸出品質保證。</p>
+        <p><strong>清空工作區不會撤銷（Undo）</strong> 已寫入磁碟的改名或移動，只會移除頁面上的任務記錄。</p>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="states">
+        <h2>7. 任務狀態</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>狀態</th><th>意思</th><th>一般操作</th></tr></thead>
+          <tbody>
+            <tr><td>待處理</td><td>已排入佇列，尚未擷取或分析</td><td>取消或忽略</td></tr>
+	            <tr><td>分析中</td><td>正在擷取內容或請求所選本機模型／目前雲端 Provider</td><td>取消</td></tr>
+            <tr><td>待確認</td><td>建議已產生，需要人工審核</td><td>編輯、應用、重新產生或忽略</td></tr>
+            <tr><td>已撤銷</td><td>先前成功應用已由撤銷（Undo）還原</td><td>需要時重新處理</td></tr>
+            <tr><td>已應用</td><td>檔案已在磁碟改名或移動</td><td>撤銷（Undo）</td></tr>
+            <tr><td>失敗</td><td>擷取、AI、驗證或檔案操作失敗</td><td>閱讀原因、修正並重試</td></tr>
+            <tr><td>已取消</td><td>使用者停止未完成工作</td><td>重新匯入或重試</td></tr>
+            <tr><td>已忽略</td><td>使用者明確排除該項目</td><td>需要時恢復處理</td></tr>
+          </tbody>
+        </table></div>
+        <p>「全部」是篩選檢視，不是第九種任務狀態；篩選不會修改檔案或暗中刪除記錄。</p>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="watch">
+        <h2>8. 監控資料夾</h2>
+        <ol class="steps">
+          <li>進入監控並選擇新增資料夾。</li><li>選擇來源、可選目的地和命名範本。</li>
+          <li>決定是否包括子資料夾。</li><li>選擇 <strong>先審核</strong> 或 <strong>自動應用</strong>。</li>
+          <li>儲存並啟用；新檔案停止寫入並穩定後才進入流程。</li>
+        </ol>
+        <div class="grid">
+          <div class="mini-card"><h3>先審核</h3><p>建議進入獨立審核佇列，只有明確批准的檔案才寫入磁碟，適合重要資料及新範本。</p></div>
+          <div class="mini-card"><h3>自動應用</h3><p>建議通過信心、資源、路徑、衝突及檔案版本檢查後才自動應用；失敗保持可見，不會把部分失敗說成全部成功。</p></div>
+        </div>
+        <figure class="shot"><img src="zh-HK/06-watch-create.png" alt="繁體中文監控資料夾頁顯示新增監控表格"><figcaption>來源、目的地、範本、子資料夾和自動應用選項集中設定。</figcaption></figure>
+        <figure class="shot"><img src="zh-HK/07-watch-results.png" alt="繁體中文監控審核結果顯示應用和忽略操作"><figcaption>先審核結果與批次命名工作區分開。</figcaption></figure>
+        <p>序匣會等待檔案寫入穩定、合併短時間內重複事件，並略過常見暫存檔。來源和目的資料夾關係會被驗證，防止序匣移出的檔案再次觸發相同監控。</p>
+	        <p>監控與批次共用頂部處理選擇和同一個受管理本機服務，不會因改變處理方式而改寫監控範本。部分或未知覆蓋、內容不足或本機未就緒時，自動應用會保守保留，不會強行改名；請閱讀原因並先審核。</p>
+        <ul>
+          <li><strong>Paused：</strong>使用者手動暫停，可在準備好後恢復。</li>
+          <li><strong>ResourcePaused：</strong>本機佇列、並行數或連續失敗護欄啟動；先處理原因再恢復。</li>
+          <li><strong>Error：</strong>監察器、路徑或權限錯誤；修復後重試。</li>
+        </ul>
+        <div class="callout warning"><strong>自動應用不是無條件改名</strong>它仍受副檔名、路徑、衝突、版本、資源及錯誤退避保護；批次智能模式不會改變已有監控設定。</div>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="templates">
+        <h2>9. 命名範本與受控詞彙</h2>
+        <figure class="shot"><img src="zh-HK/08-templates.png" alt="繁體中文命名範本頁顯示預設公式和編輯操作"><figcaption>範本按場景提供用途和合成名稱例子。</figcaption></figure>
+        <figure class="shot"><img src="zh-HK/09-vocabulary.png" alt="繁體中文受控詞彙頁顯示分類及 AI 候選"><figcaption>內置詞彙可修改；AI 候選必須由使用者決定。</figcaption></figure>
+        <p>命名範本入口包含「範本」及「受控詞彙」兩個分頁，不會增加另一個左側主導覽入口。</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>範本</th><th>用途／必要資料</th><th>合成例子</th></tr></thead>
+          <tbody>
+            <tr><td>通用命名（預設）</td><td>一般檔案：日期＋標題</td><td>2026-09-08_產品指南.pdf</td></tr>
+            <tr><td>簡潔標題</td><td>只保留內容標題</td><td>產品指南.pdf</td></tr>
+            <tr><td>單據報銷</td><td>日期、類型及標題</td><td>2026-09-08_發票_辦公用品.pdf</td></tr>
+            <tr><td>合約往來</td><td>機構及日期</td><td>星河公司_2026-09-08_採購合約.pdf</td></tr>
+            <tr><td>項目資料</td><td>項目、日期及標題</td><td>網站改版_2026-09-08_需求說明.docx</td></tr>
+            <tr><td>學習資料</td><td>主題及標題</td><td>英文學習_閱讀筆記.pdf</td></tr>
+            <tr><td>論文文獻</td><td>作者、年月及標題</td><td>陳大文_2026-09_圖像辨識.pdf</td></tr>
+            <tr><td>相片與影片</td><td>主題、日期、視覺標題；需要視覺能力</td><td>旅行_2026-09-08_海港日落.jpg</td></tr>
+            <tr><td>版本文件</td><td>項目、標題及明確版本</td><td>網站改版_設計方案_V2.docx</td></tr>
+          </tbody>
+        </table></div>
+        <p>範本可編輯；升級不會覆寫現有範本或重建已刪除的預設。選範本不會修改磁碟，原副檔名保持不變。如缺少機構、項目、作者或版本等必要依據，序匣不能虛構；應改用較簡單範本或提供可讀內容。</p>
+        <div class="callout tip"><strong>智能模式不是第十個範本</strong>範本模式要求精確欄位；AI 智能命名按上下文選取有證據的具體資料，並遵守統一格式政策，不會把所有可能欄位塞入每個名稱。</div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>欄位</th><th>用途</th><th>必要但缺失時</th></tr></thead>
+          <tbody>
+            <tr><td>dcDate</td><td>文件日期</td><td rowspan="10">項目需要重新產生或審核，不能暗中成為可應用的殘缺名稱。</td></tr>
+            <tr><td>dcTitle</td><td>核心標題</td></tr><tr><td>dcSubject</td><td>主題</td></tr>
+            <tr><td>dcType</td><td>類型</td></tr><tr><td>dcCreator</td><td>作者</td></tr>
+            <tr><td>dcIdentifier</td><td>識別碼</td></tr><tr><td>extOrganization</td><td>機構</td></tr>
+            <tr><td>extProject</td><td>項目</td></tr><tr><td>extStatus</td><td>狀態</td></tr><tr><td>extVersion</td><td>版本</td></tr>
+          </tbody>
+        </table></div>
+        <p>可調整欄位次序、日期格式、分隔符、輸出語言及平面或分類整理。預設範本若已刪除，設定頁會阻止儲存並要求重選，不會暗中換成另一個。</p>
+        <p>subject、organization、project、status 及 type 詞彙可以搜尋、篩選、新增、編輯及刪除。AI 候選不會自動污染正式詞彙：只用一次、審核後接受，或拒絕。</p>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="multimodal">
+        <h2>10. 圖片、掃描檔和影片</h2>
+        <div class="flow" aria-label="多媒體本機預處理流程"><span>本機讀取</span><span>縮放、轉譯或擷取影格</span><span>套用頁數及影格上限</span><span>傳送必要內容</span><span>接收受限命名輸出</span></div>
+	        <p><strong>圖片：</strong>序匣在本機修正方向、處理透明度並限制尺寸，再把縮小圖片交給已就緒的本機視覺模型，或在雲端模式交給具視覺能力的 Provider。原始高解像度檔案不會因分析被修改。</p>
+        <p><strong>掃描 PDF：</strong>有文字層時優先擷取文字；掃描頁在安全頁數上限內於本機轉譯，再以縮小圖片分析，超出上限不會無限制處理。</p>
+        <p><strong>影片：</strong>序匣在本機依次序選取代表性關鍵影格，再把影格當圖片分析。經濟、均衡及高品質模式通常約用 4、6、8 幀，並受設定護欄限制。序匣<strong>不會上載完整影片</strong>。</p>
+        <div class="callout warning"><strong>降級必須可見</strong>目前 Provider 不支援圖片時，序匣不會假裝圖片、掃描頁或影片影格已接受視覺分析。</div>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="limits">
+        <h2>11. 資源限制、快取與用量</h2>
+        <p>這些設定限制本機工作和請求大小，並非第三方 Provider 的收費預測。</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>設定</th><th>控制內容</th><th>建議</th></tr></thead>
+          <tbody>
+            <tr><td>最大檔案大小</td><td>阻止過大檔案分析；範圍 1–500 MB</td><td>先使用預設值</td></tr>
+            <tr><td>PDF 頁數上限</td><td>限制掃描頁轉譯及傳送</td><td>使用足以代表內容的頁數</td></tr>
+            <tr><td>影片影格上限</td><td>限制本機擷取和視覺請求</td><td>一般素材毋須超過高品質預設</td></tr>
+            <tr><td>並行上限</td><td>限制同時分析數量</td><td>網絡或電腦較慢時降低</td></tr>
+            <tr><td>重試上限</td><td>限制可重試網絡或服務錯誤</td><td>認證錯誤應修正而非一直重試</td></tr>
+          </tbody>
+        </table></div>
+        <p>經濟、均衡和高品質主要調整圖片大小、影格數、請求規模及所需模型能力，不是「基本、專業、完美」的品質承諾。</p>
+        <p>設定提供本機快取狀態及清理入口，快取組件可供相容流程使用；但目前 AI 智能命名的批次分析流程不會讀取或寫入命名建議快取。不要從快取介面推斷智能建議已被快取；重新產生仍會按目前任務進行分析。</p>
+	        <p>本機與雲端快取分區；清理建議快取不等於刪除本機模型資源，也不是釋放記憶體或卸載服務的承諾。資源準備狀態與非貨幣用量是不同資訊。</p>
+        <p>用量可顯示 Provider、請求次數、輸入及輸出 Token。沒有記錄時顯示空白狀態；資料不可用時明確說明，不會虛構為零。</p>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="privacy">
+        <h2>12. 私隱與資料流程</h2>
+	        <div class="callout privacy"><strong>先看目前處理方式</strong>本機私隱模式下，序匣不上載檔案內容或命名請求；雲端 AI 會把完成命名所需內容傳送至您設定的第三方 Provider。下表只說明雲端載荷。本機預處理本身不等於零雲端傳輸；公開資源下載則是另行同意的網絡活動。</div>
+        <div class="table-wrap"><table>
+	          <thead><tr><th>內容</th><th>本機處理</th><th>只在雲端模式可能傳送至目前 Provider</th></tr></thead>
+          <tbody>
+            <tr><td>文件或試算表</td><td>擷取文字及中繼資料</td><td>必要文字、中繼資料及命名上下文</td></tr>
+            <tr><td>圖片</td><td>方向、透明度及縮放處理</td><td>縮小圖片及必要中繼資料</td></tr>
+            <tr><td>掃描 PDF</td><td>在上限內轉譯頁面</td><td>縮小掃描頁圖片及必要上下文</td></tr>
+            <tr><td>影片</td><td>本機選取約 4–8 個有序關鍵影格</td><td>影格圖片及摘要上下文；不包括完整影片</td></tr>
+          </tbody>
+        </table></div>
+        <ul>
+          <li>API Key 只應進入系統憑證儲存及實際請求層，不應出現在一般日誌或診斷套件。</li>
+          <li>Provider 載荷使用擷取結果、縮小圖片或關鍵影格，不應包含完整來源路徑。</li>
+          <li>診斷資料會遮蔽使用者名稱、磁碟路徑、網絡共享路徑和疑似憑證值。</li>
+          <li>保存期限、訓練政策和地區合規由所選 Provider 控制，請查閱該帳戶的目前設定及條款。</li>
+	          <li>本機承諾只約束序匣，不控制其他應用程式或作業系統同步，也不表示整部電腦沒有聯網；受管理子程序沒有網絡能力，不以任意本機連接埠作私隱證明。</li>
+	          <li>本機日誌和診斷不記錄檔案內容、金鑰或來源路徑；分享前仍應檢查。沒有隱藏遙測或失敗後暗中轉雲端。</li>
+        </ul>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="undo">
+        <h2>13.撤銷（Undo）與檔案安全</h2>
+        <ul>
+          <li>匯入、擷取、產生建議及手動編輯建議<strong>不會</strong>寫入磁碟名稱。</li>
+          <li>應用 及 自動應用會執行實際重新命名或移動。</li>
+          <li>撤銷（Undo）按反向次序還原最近仍合資格的成功記錄。</li>
+        </ul>
+        <h3>執行前保護</h3>
+        <ul>
+          <li><strong>副檔名：</strong>建議不能把原副檔名換成另一類型。</li>
+          <li><strong>路徑界線：</strong>目的地必須留在允許資料夾內，連結及相似前綴不能繞過檢查。</li>
+          <li><strong>檔案版本：</strong>分析後大小或修改時間有變，舊建議不能套用到新內容。</li>
+          <li><strong>衝突：</strong>已有目標會安全編號或報告失敗，不會靜默覆寫。</li>
+          <li><strong>逐檔結果：</strong>每個檔案有獨立結果，並綁定正確任務及批次。</li>
+	          <li><strong>同一磁碟區限制：</strong>應用及撤銷目前只支援同一磁碟區。跨磁碟區移動會安全失敗並保留來源檔案，不會改為複製後刪除；資料夾連結、不安全身份、副檔名變更或被佔用目標均拒絕，不覆寫已有檔案。</li>
+        </ul>
+        <div class="callout warning"><strong>撤銷（Undo）不是備份系統</strong>若其他程式在應用後刪除、取代、鎖定或修改檔案，撤銷（Undo）可能失敗；重要資料仍需獨立備份。</div>
+        <p>關閉或清空工作區不會逆轉磁碟操作，也不能代替撤銷（Undo）。成功及失敗的還原結果會逐項顯示。</p>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="troubleshooting">
+        <h2>14. 診斷與疑難排解</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>現象</th><th>常見原因</th><th>處理</th></tr></thead>
+          <tbody>
+            <tr><td>認證失敗</td><td>Key、模型、權限或地址錯誤</td><td>重新複製、確認帳戶權限並再測試</td></tr>
+            <tr><td>429 或暫時錯誤</td><td>Provider 限流或暫停服務</td><td>等候退避、降低並行，不要無限重試</td></tr>
+            <tr><td>逾時</td><td>網絡、代理、地址或服務狀態</td><td>恢復目前 Provider 連線後再測試</td></tr>
+            <tr><td>沒有視覺建議</td><td>沒有圖片能力或觸及本機上限</td><td>閱讀任務原因，改用 Provider 或調整安全上限</td></tr>
+            <tr><td>智能名稱籠統或無依據</td><td>內容不足或回應無效</td><td>修正後重新產生；要換範本模式，移除失敗任務後按新模式重新匯入</td></tr>
+            <tr><td>智能名稱過長</td><td>主體超過 180 個 UTF-16 單位</td><td>重新產生；首次失敗沒有可編輯名稱，也不會自動截斷</td></tr>
+            <tr><td>來源已改變</td><td>分析後由外部程式修改</td><td>重新分析目前內容</td></tr>
+            <tr><td>衝突或檔案被佔用</td><td>目標已存在或由其他程式鎖定</td><td>關閉程式、改目的地或接受安全編號</td></tr>
+            <tr><td>ResourcePaused</td><td>佇列、並行或連續失敗護欄</td><td>解決原因後才恢復</td></tr>
+          </tbody>
+        </table></div>
+        <figure class="shot"><img src="zh-HK/10-system-status.png" alt="繁體中文系統狀態頁分別顯示擷取及視覺能力"><figcaption>系統狀態不會把已降級的組件假裝成可用。</figcaption></figure>
+        <p>在設定匯出診斷套件，分享前先自行檢查。套件用於設定結構、組件狀態及錯誤類別，不應包含 API Key。</p>
+        <div class="callout error"><strong>不要把密鑰放入截圖或支援訊息</strong>只報告 Provider、模型、錯誤類別和步驟；即使只顯示部分 API Key 亦不應分享。</div>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="formats">
+        <h2>15. 支援格式</h2>
+        <p>副檔名不代表檔案必定完整或真實；損壞、加密或偽裝格式仍可能無法擷取。</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>類別</th><th>副檔名</th></tr></thead>
+          <tbody>
+            <tr><td>文件及試算表</td><td>PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, TXT, MD, CSV, TSV, RTF, HTML, XML, EPUB, ODT, ODS, ODP</td></tr>
+            <tr><td>圖片</td><td>JPG, JPEG, PNG, WebP, GIF, BMP, TIF, TIFF, AVIF</td></tr>
+            <tr><td>影片</td><td>MP4, MOV, M4V, MKV, AVI, WebM, TS, MTS, M2TS, WMV, FLV, 3GP, 3G2, MXF, MPG, MPEG, OGV</td></tr>
+          </tbody>
+        </table></div>
+	        <p>可匯入不等於所選模型可理解視覺內容。序匣先嘗試本機擷取，再按本機就緒狀態或雲端 Provider 能力選擇相容路線，或顯示降級原因。</p>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="faq">
+        <h2>16. 常見問題</h2>
+	        <h3>是否必須使用某個 Provider？</h3><p>雲端不是。預設或相容 Custom Provider 均可使用，前提是模型、地址、權限及結構化輸出能力配合任務。本機首版則固定使用本機章節的 Qwen 模型，不接受任意模型。</p>
+        <h3>為何產生建議後沒有改名？</h3><p>這是安全合約。建議產生及編輯不寫入磁碟；先審核 需要明確 應用。</p>
+        <h3>兩個命名模式有何分別？</h3><p>範本模式擷取精確欄位並組合指定公式；AI 智能命名按上下文產生簡潔具體摘要，並遵守一致政策。它不是萬用範本，而範本模式仍是預設。</p>
+        <h3>切換介面語言會翻譯檔案名稱嗎？</h3><p>不會。介面、手冊及檔案名稱語言彼此獨立；批次匯入時才選擇名稱語言，已有任務及磁碟檔案不會重寫。</p>
+	        <h3>圖片可匯入但不能辨識？</h3><p>本機先檢查服務是否就緒；雲端檢查目前 Provider 圖片能力，再核對大小、頁數及影格上限。文字能力不能代替視覺理解。</p>
+        <h3>為何監控沒有自動應用？</h3><p>可能使用先審核、檔案尚未穩定，或信心、資源、路徑、衝突及版本檢查阻止操作。</p>
+        <h3>怎樣還原已改名檔案？</h3><p>使用撤銷（Undo）。外部修改、佔用或路徑衝突可令個別還原失敗。</p>
+        <h3>序匣是否包括 Provider 額度？</h3><p>不包括。序匣不提供雲端額度或金額帳單；第三方帳戶由該服務管理，程式只記錄非貨幣請求用量。</p>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+
+      <section class="chapter" id="version">
+        <h2>17. 版本與支援界線</h2>
+        <p>本手冊說明<strong>序匣 1.0.0 Windows 桌面版</strong>及目前正式入口可見行為。</p>
+        <ul>
+          <li>首個版本是個人單機工具，不包括帳戶登入、團隊協作、雲端同步、付款、授權或自動更新服務。</li>
+          <li>介面及手冊提供簡體中文、英文和繁體中文（香港）；取消語言預覽會回復最近儲存的介面語言。</li>
+          <li>批次檔案名稱另支援日文及西班牙文，但不代表程式提供日文或西班牙文介面。</li>
+          <li>Provider 名稱、模型目錄和地址可以改變；請使用目前可用、能力匹配並通過測試連線的設定。</li>
+          <li>本手冊完全本機化，不使用網絡字體、腳本、翻譯服務或 CDN；列印只包含目前開啟的語言。</li>
+        </ul>
+        <p>如介面與手冊不同，先確認程式版本，再報告入口、準確步驟、任務狀態及已脫敏錯誤類別。</p>
+        <a class="back-top" href="#top">返回頁首</a>
+      </section>
+	      <section class="chapter" id="local-mode">
+	        <h2>18. 本機私隱與資源準備</h2>
+	        <h3>兩個獨立選擇：如何命名，在哪裏分析</h3>
+	        <p><strong>按範本命名／AI 智能命名</strong>決定命名策略；<strong>雲端 AI／本機私隱</strong>決定處理位置。兩種處理方式都支援兩種命名模式，不會改寫已有範本或預設範本。介面語言與匯入時確認的檔案名稱語言也互相獨立。</p>
+	        <p>在標題列下方的永久處理列選擇本機私隱；批次命名與監控資料夾共用這個選擇。選擇 LOCAL 會立即阻止之後的新雲端請求，即使資源缺失、正在準備、失敗、暫停或取消也一樣。已送出的雲端請求無法收回。本機失敗不會自動退回雲端；只有明確選擇雲端 AI 才重新開放新的雲端請求。</p>
+	        <div class="callout warning"><strong>儲存設定不是確認模式的按鈕</strong>處理選擇立即獨立儲存，資源操作立即生效；設定的儲存或取消不會撤銷這些操作。取消準備不會轉回雲端。若選擇未能儲存，請按「重試儲存選擇」；目前阻止雲端的選擇不會因取消設定而撤銷。</div>
+	        <h3>首次使用：先檢查，再明確授權</h3>
+	        <ol class="steps">
+	          <li>先選本機私隱，再開啟<strong>設定 → 通用</strong>，向下找到<strong>本機資源</strong>卡片。按<strong>檢查資源</strong>只檢查已有狀態，不會開始下載或執行模型。</li>
+	          <li>閱讀模型、固定版本、資源位置、來源主機及已驗證、已取得和剩餘傳輸位元組。首版本機模型為 <strong>Qwen/Qwen3.5-4B</strong> 指令模型，使用 <strong>Q4_K_M</strong> 和視覺投影資源；執行環境為 Windows x64 CPU <strong>llama.cpp b10885</strong>，不是 Base 模型或雲端 Qwen API。</li>
+	          <li>如要聯網取得資源，按<strong>下載並啟用</strong>。此步只展開可見同意說明；再按<strong>同意，下載公開資源</strong>才開始下載。固定公開來源主機為 <code>github.com</code> 及 <code>huggingface.co</code>，不傳送文件、名稱、路徑、命名提示或金鑰。可按「暫不下載」拒絕。</li>
+	          <li>不授權下載時，可按<strong>匯入離線資料夾</strong>，選擇含規定固定檔案集合的資料夾：<code>llama-b10885-bin-win-cpu-x64.zip</code>、<code>Qwen3.5-4B-Q4_K_M.gguf</code> 及 <code>mmproj-F16.gguf</code>，必須符合固定版本、大小及校驗值。這不是任意模型、執行檔或自訂目錄清單入口；匯入只讀取及驗證，不會改動原資料夾。</li>
+	          <li>已有資源時，按<strong>準備已有資源</strong>重新驗證，啟動與批次及監控共用的受管理服務，並進行實際自我檢查。毋須命令列、開發工具或自行啟動伺服器。驗證後可重用離線資源，不必重複下載。</li>
+	          <li>等候頂部處理列顯示<strong>本機私隱已啟用，服務自檢通過</strong>（READY），再匯入少量可還原檔案。逐一核對建議、證據和覆蓋提示，確認後應用；未就緒時先解決資源狀態，不要把「資源可用」當成「模型已啟用」。</li>
+	        </ol>
+	        <h3>容量、速度和狀態均不是保證</h3>
+	        <p>固定資源共 <code>3431786583</code> 位元組，約 3.43 GB（十進制），包括隨程式提供的 <code>18425079</code> 位元組執行環境 ZIP。重用資源之前，模型及視覺資源的遠端傳輸上界為 <code>3413361504</code> 位元組；解壓另增加 <code>46749981</code> 位元組，每次執行還需要暫存空間。因此資源總數不是精確的所需可用空間，請按卡片位置、提示及實際磁碟餘量預留空間。</p>
+	        <p>資源存於目前作業系統使用者的資料目錄 <code>Xuxia/local-ai</code>，與程式目錄分開；以卡片顯示的位置為準。數字是上次驗證、觀察或估算的快照；已接收位元組不等於已驗證或保證保留，「剩餘」也不是最終保留空間。硬件准入檢查不是效能保證，不承諾統一的最低記憶體、啟動時間或處理速度。首次準備和模型執行可能較慢，內容及硬件也影響結果品質。</p>
+	        <div class="table-wrap"><table><thead><tr><th>資源／服務狀態</th><th>如何理解</th></tr></thead><tbody>
+	          <tr><td>MISSING／PARTIAL</td><td>缺失或只有部分資源，尚未啟用。</td></tr>
+	          <tr><td>TRANSFERRING／VERIFYING／PREPARING</td><td>傳輸、驗證或準備中；進度不表示可立即分析。</td></tr>
+	          <tr><td>AVAILABLE</td><td>已驗證，但尚未啟用；仍須由同一服務完成準備。</td></tr>
+	          <tr><td>READY</td><td>目前本機服務通過實際自我檢查，且仍選擇本機，才可處理新任務。</td></tr>
+	          <tr><td>FAILED／CANCELLED／PAUSED</td><td>失敗、已取消或已暫停並非就緒；本機選擇保留，不轉雲端。</td></tr>
+	          <tr><td>CLEANUP_PENDING／RECOVERY_REQUIRED</td><td>清理未完成或需要保守復原，不要自行清空資源或日誌目錄。</td></tr>
+	        </tbody></table></div>
+	        <h3>暫停、取消、修復和復原</h3>
+	        <p>按「暫停」或「取消資源操作」後，仍須等候操作擁有者結束工作；取消請求不代表工作立即結束。等候狀態消失後才執行可用的新操作。如保留的是目前已知擁有者，可按介面允許的<strong>重試目前擁有者清理</strong>。未知的舊擁有者、未完成日誌或歸屬不明狀態須保守復原：保留證據並尋求支援，不會自動重設或刪除。</p>
+	        <p><strong>隔離目前損壞項</strong>只處理程式明確識別的目前固定資源損壞項或部分項，並保留失敗證據；不會刪除文件、未知檔案或日誌記錄。這不是清空所有資源、卸載服務或釋放記憶體功能。不要手動刪除未知檔案來製造「就緒」。</p>
+	        <h3>本機內容覆蓋與名稱審核</h3>
+	        <p>文字、圖片、掃描 PDF 頁及影片關鍵影格均在本機準備；完整 PDF、完整影片或來源路徑不會進入模型請求，只提供所需擷取文字及圖片影格。影片仍是抽取影格分析，不保證理解整段影片。空白、不可讀或覆蓋不完整會提示或拒絕；內容不足不會變成虛構建議。長文、部分或未知覆蓋需要審核，自動應用會保守保留。</p>
+	        <p>所有 AI 輸出仍須通過結構、證據及檔案名稱安全驗證。除明確設定的監控自動應用外，輸出只是建議，待您應用才改檔案。中文正字規範化只處理新產生的中文名稱：簡體輸出使用簡體，香港輸出使用香港繁體；不改寫來源、證據、已儲存範本或歷史。字形轉換不保證語義翻譯，專名仍須審核；其他語言、ASCII、日期、版本及副檔名保留。</p>
+	        <div class="callout privacy"><strong>準確的私隱界線</strong>本機私隱模式下，序匣不上載檔案內容或命名請求。受信任的受管理子程序沒有網絡能力，私隱依據不是任意 localhost 地址。這不控制其他應用程式或作業系統同步，也不封鎖整部電腦的網絡。公開資源下載仍是另行同意的聯網活動；本機與雲端快取分區，日誌和診斷不含內容、金鑰或來源路徑，失敗不會暗中轉雲端。</div>
+	        <div class="callout"><strong>如何閱讀舊截圖</strong>本手冊現有圖片是較早雲端介面的流程示意，範例為合成示範結果；不是目前本機模型截圖，也不證明資源 READY 或模型語義品質。本機處理列及資源卡片請按本章文字操作。可選語言不表示每種語言已通過真實模型驗證。</div>
+	        <a class="back-top" href="#top">返回頁首</a>
+	      </section>
+	    </main>
+  </div>
+	  <footer class="footer">序匣 1.0.0 · 離線使用者手冊 · 最後更新：2026-10-12</footer>
+</body>
+</html>

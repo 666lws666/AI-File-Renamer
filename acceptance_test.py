@@ -1,12 +1,73 @@
-"""Acceptance test suite for AI File Renamer."""
+"""Acceptance test suite for AI File Renamer.
+
+ALL tests run against temporary paths and a mock keyring — the real
+Windows Credential Manager and D:/文件AI-AGENT/config/settings.json
+are NEVER touched.
+"""
+
+import atexit
+import shutil
 import sys
 import os
 import json
+import tempfile
 from pathlib import Path
 from datetime import datetime
+from unittest.mock import patch
 
-PROJECT_ROOT = Path(r"D:\文件AI-AGENT")
+PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
+# ═════════════════════════════════════════════════════════════════════════════
+# ISOLATION: redirect config to temp + mock keyring (never touch real creds)
+# ═════════════════════════════════════════════════════════════════════════════
+
+_SAFE_CONFIG_DIR = Path(tempfile.mkdtemp(prefix="acceptance_test_config_"))
+_SAFE_CONFIG_FILE = _SAFE_CONFIG_DIR / "settings.json"
+_SAFE_TEMPLATES_DIR = _SAFE_CONFIG_DIR / "templates"
+_SAFE_KEYRING_STORE = {}
+
+import src.config
+src.config.CONFIG_DIR = _SAFE_CONFIG_DIR
+src.config.CONFIG_FILE = _SAFE_CONFIG_FILE
+src.config.TEMPLATES_DIR = _SAFE_TEMPLATES_DIR
+
+
+def _safe_get(service, account):
+    return _SAFE_KEYRING_STORE.get(f"{service}/{account}")
+
+
+def _safe_set(service, account, password):
+    _SAFE_KEYRING_STORE[f"{service}/{account}"] = password
+
+
+def _safe_delete(service, account):
+    _SAFE_KEYRING_STORE.pop(f"{service}/{account}", None)
+
+
+_patch_get = patch("keyring.get_password", side_effect=_safe_get)
+_patch_set = patch("keyring.set_password", side_effect=_safe_set)
+_patch_del = patch("keyring.delete_password", side_effect=_safe_delete)
+_patch_get.start()
+_patch_set.start()
+_patch_del.start()
+
+# Ensure safe config dirs exist
+_SAFE_CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+_SAFE_TEMPLATES_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _cleanup_temp_dirs():
+    """Remove the temporary config directory tree on exit."""
+    try:
+        if _SAFE_CONFIG_DIR.exists():
+            shutil.rmtree(_SAFE_CONFIG_DIR, ignore_errors=True)
+    except Exception:
+        pass  # Best-effort cleanup
+
+
+atexit.register(_cleanup_temp_dirs)
 
 PASS = 0
 FAIL = 0
@@ -145,9 +206,9 @@ def test_models():
     # AppConfig
     config = AppConfig()
     check("AppConfig.provider", config.provider == "deepseek")
-    check("AppConfig.model", "deepseek-v4" in config.model)
+    check("AppConfig.model", config.model == "deepseek-flash")
     check("AppConfig.base_url", "api.deepseek.com" in config.base_url)
-    check("AppConfig.language", config.language == "zh")
+    check("AppConfig.language", config.language == "zh_CN")
     check("AppConfig.max_file_size_mb", config.max_file_size_mb == 50)
 
     # AppConfig with API key
@@ -587,69 +648,55 @@ def test_watcher():
 test_watcher()
 
 # ============================================================================
-section("14. GUI — Window Creation (no display)")
+section("14. GUI — Official QML Runtime (isolated)")
 
 def test_gui():
-    from PySide6.QtWidgets import QApplication
-    from src.ui.main_window import MainWindow
-    from src.ui.batch_rename_panel import BatchRenamePanel
-    from src.ui.preview_table import PreviewTable, FileItemTableModel
-    from src.ui.settings_dialog import SettingsDialog
-    from src.ui.template_editor import TemplateEditorDialog
-    from src.ui.watch_folder_panel import WatchFolderPanel
-    from src.app import RenamerApp
+    from src import main, main_qml
 
-    # Only create app if none exists
-    existing = QApplication.instance()
-    if existing is not None:
-        app = existing
-    else:
-        app = RenamerApp(sys.argv)
+    report = _SAFE_CONFIG_DIR / "qml-smoke.json"
+    data_dir = _SAFE_CONFIG_DIR / "qml-smoke-data"
+    exit_code = main_qml.run_smoke_test(data_dir=data_dir, report_path=report)
+    payload = json.loads(report.read_text(encoding="utf-8")) if report.exists() else {}
+    media = payload.get("media", {})
 
-    # Test config is accessible
-    if hasattr(app, 'app_config'):
-        check("GUI.RenamerApp.config", app.app_config is not None)
-        check("GUI.RenamerApp.provider", app.app_config.provider == "deepseek")
-
-    # MainWindow
-    window = MainWindow(app)
-    check("GUI.MainWindow.create", window is not None)
-    check("GUI.MainWindow.title", "AI File Renamer" in window.windowTitle())
-    check("GUI.MainWindow.size", window.width() >= 1000, f"w={window.width()}")
-
-    # MainWindow components
-    check("GUI.MainWindow.batch_panel", window.batch_panel is not None)
-    check("GUI.MainWindow.watch_panel", window.watch_panel is not None)
-
-    # BatchRenamePanel
-    panel = window.batch_panel
-    check("GUI.BatchPanel.table", panel.table is not None)
-    check("GUI.BatchPanel.scanner", panel.scanner is not None)
-    check("GUI.BatchPanel.history", panel.history is not None)
-    check("GUI.BatchPanel.rename_engine", panel.rename_engine is not None)
-
-    # PreviewTable
-    table = panel.table
-    check("GUI.PreviewTable.model", table.table_model is not None)
-    check("GUI.PreviewTable.column_count", table.table_model.columnCount() == 5)
-
-    # SettingsDialog
-    dialog = SettingsDialog(app)
-    check("GUI.SettingsDialog.create", dialog is not None)
-    check("GUI.SettingsDialog.tabs", dialog.tabs.count() == 3)
-
-    # TemplateEditorDialog
-    tmpl_dialog = TemplateEditorDialog(app)
-    check("GUI.TemplateEditor.create", tmpl_dialog is not None)
-
-    # WatchFolderPanel
-    watch = window.watch_panel
-    check("GUI.WatchPanel.watcher", watch.watcher is not None)
-
-    # Clean up
-    window.close()
-    dialog.close()
-    tmpl_dialog.close()
+    check("GUI.official_entry", main.main is main_qml.main)
+    check(
+        "GUI.retired_entry_removed",
+        not (PROJECT_ROOT / "src" / "main_legacy.py").exists(),
+    )
+    check("GUI.QML.report_exists", report.is_file())
+    check("GUI.QML.smoke_exit", exit_code == 0, f"exit={exit_code}")
+    check("GUI.QML.status", payload.get("status") == "ok", str(payload))
+    check("GUI.QML.brand", payload.get("brand") == "Xuxia", str(payload))
+    check("GUI.QML.version", payload.get("version") == "1.0.0", str(payload))
+    check(
+        "GUI.QML.warning_count",
+        payload.get("qml_warning_count") == 0,
+        str(payload),
+    )
+    check(
+        "GUI.QML.ephemeral_credentials",
+        payload.get("credential_backend") == "ephemeral",
+    )
+    check("GUI.media.image", media.get("image_preprocess") == "ok", str(media))
+    check("GUI.media.pdf", media.get("pdf_render") == "ok", str(media))
+    check("GUI.media.video", media.get("video_keyframes") == "ok", str(media))
+    check(
+        "GUI.media.diagnostics",
+        media.get("diagnostics_export") == "ok",
+        str(media),
+    )
+    check(
+        "GUI.media.credential_import",
+        media.get("windows_credential_backend") == "import-ok",
+        str(media),
+    )
+    check("GUI.isolated_data_dir", data_dir.is_relative_to(_SAFE_CONFIG_DIR))
+    check("GUI.user_guide", (PROJECT_ROOT / "序匣用户手册.html").is_file())
+    check(
+        "GUI.windows_rc",
+        (PROJECT_ROOT / "dist" / "Xuxia" / "Xuxia.exe").is_file(),
+    )
 
 test_gui()
 

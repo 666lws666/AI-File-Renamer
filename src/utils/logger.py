@@ -1,5 +1,6 @@
 """Logging configuration using loguru."""
 
+import os
 import sys
 from pathlib import Path
 from loguru import logger
@@ -9,7 +10,7 @@ def setup_logging(log_dir: str | Path = None, level: str = "INFO") -> None:
     """Configure loguru with console and file sinks.
 
     Args:
-        log_dir: Directory for log files. Defaults to D:\\文件AI-AGENT\\logs\\
+        log_dir: Directory for log files. Defaults to the user's local app-data directory.
         level: Minimum log level for console output.
     """
     logger.remove()
@@ -25,7 +26,8 @@ def setup_logging(log_dir: str | Path = None, level: str = "INFO") -> None:
 
     # File sink
     if log_dir is None:
-        log_dir = Path("D:/文件AI-AGENT/logs")
+        base = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
+        log_dir = Path(base) / "Xuxia" / "logs"
     log_path = Path(log_dir)
     log_path.mkdir(parents=True, exist_ok=True)
 

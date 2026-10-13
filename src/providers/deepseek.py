@@ -11,7 +11,7 @@ class DeepSeekProvider(BaseProvider):
     We use the official openai library pointed at api.deepseek.com.
     """
 
-    def __init__(self, api_key: str, base_url: str = "https://api.deepseek.com/v1", model: str = "deepseek-v4-pro"):
+    def __init__(self, api_key: str, base_url: str = "https://api.deepseek.com/v1", model: str = "deepseek-flash"):
         super().__init__(api_key, base_url, model)
 
     def suggest_filename(
@@ -62,7 +62,6 @@ class DeepSeekProvider(BaseProvider):
             )
 
             logger.info(f"测试连接: {self.base_url} model={self.model}")
-            logger.info(f"API Key 前缀: {self.api_key[:8]}... 后缀: ...{self.api_key[-4:]}")
 
             response = client.chat.completions.create(
                 model=self.model,

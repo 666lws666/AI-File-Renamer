@@ -5,6 +5,17 @@ from .base import BaseProvider
 from .deepseek import DeepSeekProvider
 
 
+LEGACY_PROVIDER_IDS = frozenset({"openai", "claude"})
+
+
+def is_legacy_provider(provider_name: str) -> bool:
+    """Return whether an old provider remains importable only for migration."""
+    return (
+        isinstance(provider_name, str)
+        and provider_name.strip().casefold() in LEGACY_PROVIDER_IDS
+    )
+
+
 def create_provider(config) -> BaseProvider:
     """Create an AI provider instance from application configuration.
 
@@ -26,7 +37,7 @@ def create_provider(config) -> BaseProvider:
         return DeepSeekProvider(
             api_key=config.api_key,
             base_url=config.base_url or "https://api.deepseek.com",
-            model=config.model or "deepseek-v4-pro",
+            model=config.model or "deepseek-flash",
         )
 
     # OpenAI uses the same SDK pattern

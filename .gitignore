@@ -30,6 +30,16 @@ Thumbs.db
 dist/
 build/
 *.spec
+!/packaging/xuxia.spec
+
+# Claude Code harness config (local developer config, never commit)
+/.claude/
+
+# Local private design evidence (not for public repository)
+/docs/reference-evidence/
+
+# M1 native screenshot verification outputs (not for public repository)
+/tests/screenshots/qa-current/
 
 # Test shortcuts
 *_test_*.bat

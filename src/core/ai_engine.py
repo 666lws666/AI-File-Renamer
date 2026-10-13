@@ -1,4 +1,10 @@
-"""AI Engine — orchestrates content → prompt → API call → structured result."""
+"""AI Engine — orchestrates content → prompt → API call → structured result.
+
+Usage recording (non-monetary): the unified completion boundary of this
+orchestration.  When a ``UsageRecorder`` is injected, every completed
+suggestion (success or failure) appends ONE usage record — the five
+providers are never touched and never duplicate recording logic.
+"""
 
 import json
 import re
@@ -14,14 +20,17 @@ from ..providers.factory import create_provider
 class AIEngine:
     """Orchestrates AI-powered filename suggestion for files."""
 
-    def __init__(self, config: AppConfig):
+    def __init__(self, config: AppConfig, usage_recorder=None):
         """Initialize with application configuration.
 
         Args:
             config: AppConfig with API key, provider, model settings.
+            usage_recorder: Optional UsageRecorder — records one
+                non-monetary usage entry per suggestion completion.
         """
         self.config = config
         self.provider = None  # Lazily created
+        self.usage_recorder = usage_recorder
 
     def _get_provider(self):
         """Get or create the AI provider instance."""
@@ -73,11 +82,13 @@ class AIEngine:
             file_item.final_name = suggested
             file_item.status = FileStatus.SUGGESTED
             logger.info(f"AI 建议: {file_item.original_name} → {suggested}")
+            self._record_usage(file_item, success=True, error_category="")
 
         except Exception as e:
             logger.error(f"AI 建议失败: {file_item.original_name} — {e}")
             file_item.status = FileStatus.FAILED
             file_item.error_message = str(e)
+            self._record_usage(file_item, success=False, error_category=e)
 
     def _build_user_prompt(self, file_item: FileItem) -> str:
         """Build the user prompt with file content and metadata."""
@@ -152,3 +163,33 @@ class AIEngine:
             return provider.test_connection()
         except Exception as e:
             return False, str(e)
+
+    # ── Non-monetary usage recording (injectable recorder, never crashes) ──
+
+    def _record_usage(self, file_item: FileItem, *, success: bool, error_category) -> None:
+        """Record one usage entry at the completion boundary.
+
+        The recorder is optional; failures are logged and swallowed so usage
+        recording can never break the rename flow.  No secrets, prompts,
+        content, or full paths are passed to the recorder.
+        """
+        if self.usage_recorder is None:
+            return
+        try:
+            from ..core.usage import UsageRecord, content_kind_for_file_type, error_category_for
+
+            self.usage_recorder.record(UsageRecord(
+                provider_id=self.config.provider,
+                profile_id=self.config.provider,
+                model=self.config.model,
+                content_kind=content_kind_for_file_type(file_item.file_type),
+                request_count=1,
+                input_tokens=None,   # legacy provider interface reports none
+                output_tokens=None,  # — recorded as unknown, never forged 0
+                cache_hit=False,
+                success=success,
+                error_category="" if success else error_category_for(error_category),
+                operation_id=getattr(file_item, "id", "") or "",
+            ))
+        except Exception:
+            logger.debug("usage recording skipped (non-fatal)")

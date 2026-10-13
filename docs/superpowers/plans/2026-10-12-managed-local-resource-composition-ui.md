@@ -1,0 +1,53 @@
+# Managed Local Resource Composition and Desktop Delivery Plan
+
+> Execute after the accepted D1 backend and D2 operation-owner checkpoints. Use the subagent-driven-development skill; one source writer at a time. Root owns actual native image judgment, evidence, Git and final packaging.
+
+**Goal:** Connect the single managed Qwen resource/inference graph to the real Batch and Watch product, expose honest first-use preparation, and deliver the three-language manuals and current Windows artifact. This implements the existing approved scope, not another feature phase.
+
+## Constraints and actual baseline
+
+- Read the complete managed-local-resource product design, the accepted D1/D2 source interfaces, and the production Watch contract. Fill the exact task baseline from root's current HEAD at dispatch; historical engineering catalog/readiness evidence is not product readiness.
+- No cloud API/key/Credential Manager/private input, push/release, main-checkout merge, system policy changes, or formal Golden update. Cross-volume file movement remains refused. Preserve failures and originals.
+- Use the existing one ProcessingCoordinator, authority, catalog, analyzer, preparation service, inference service, Watch composition and serial file lane. Never create a second model/inference authority for the settings card.
+- All resource I/O/hashes/model self-check remain off the Qt thread. Constructors and properties are inert. Resource AVAILABLE means verified, not enabled. Genuine current service READY is the only readiness authority.
+- A source compatibility seam is explicit injection, not silently disabled product functionality or a QA-directory search. Register each owned controller/runner before the next fallible construction step. Finite incomplete drain retains Qt, callback tails and workers.
+
+## Task 1 — product graph composition
+
+**Files:** bounded src/qml_bootstrap.py, a narrowly owned src/services/local_ai/runtime_shutdown_owner.py with tests/unit/test_local_runtime_shutdown_owner.py for asynchronous same-service shutdown, src/controllers/processing_coordinator.py only for a demonstrated catalog-publication contract, tests/integration/test_managed_processing_runtime.py, tests/qml/test_qml_bootstrap.py, and a new tests/integration/test_managed_local_resource_composition.py. The reproduced old synthetic `test_managed_watch_runtime.py:make_runtime` fixture may explicitly disable the resource controller, without changing assertions or the enabled product default. Exact public injection signatures must match accepted D2, not anticipated stubs.
+
+1. RED: omitted default loads the pinned product catalog independently of CWD; resource manager and inference config share the same catalog/resource/runtime/state roots; controller borrows the exact coordinator/inference service; Batch and Watch borrow the exact analyzer/authority; explicit injected controller ownership and explicit None semantics remain testable.
+2. Replace engineering-only default configuration with the product loader. Keep the engineering catalog as research metadata; do not relabel it production. Preserve deliberately injected LocalInferenceConfig/factories without discovering QA caches or mutating their metadata. If preparing resources for an injected config is unsupported, require a clear explicit test/composition seam rather than pretending the foreign catalog is accepted.
+3. Construct one ResourceManager and one accepted D2 controller/runner, register the owner on the partial QmlRuntime immediately, then bind the controller before QML creation. The trusted existing user-data anchor comes from captured absolute LOCALAPPDATA (or an explicit existing synthetic test anchor), never QML/user executable selection. Keep state out of the program directory.
+4. Catalog publication cancels stale document contexts without changing the selected mode or replacing a genuine local engine identity with a cloud fingerprint. Test settings/template/catalog changes during preparation and after READY; reentrant publication must not enable a stale operation.
+5. Integrate close order: first authority/admission seal, stop new resource work, then accepted `drain_owned_operations` proof for resource worker/callback/Qt acknowledgment/native ownership before same-service shutdown, then full resource close before Qt destruction. A CLEANUP_PENDING borrowed service cannot itself prevent proving that resource operations have drained; it still prevents complete runtime close. Retain and separately drain an explicitly registered asynchronous service-shutdown owner so native cleanup/journal work does not block the Qt thread. Existing Batch/Watch/final file outcomes still reconcile. Test nested public signal cleanup, delayed completion, partial-construction failure, borrowed ownership and normal exit; do not infer idle from a terminal logical ID.
+6. Saved LOCAL startup may queue only prepareExisting through the same accepted owner after QML binds. Missing resources or dirty journal remains LOCAL/unavailable, never downloads, implicit repairs or CLOUD. Saved CLOUD does not launch a model. Tests isolate all user state and guard forbidden calls.
+7. Freeze after targeted composition/Watch/processing/controller covers and diff-check. Root independent review and covering verification precede the UI task.
+
+## Task 2 — processing bar and local-resource settings card
+
+**Files:** create src/ui_qml/ProcessingModeBar.qml and LocalResourcesCard.qml; bounded main.qml/Shell.qml/PreferencesPage.qml and the exact routing property path if necessary; zh_CN/zh_HK/en_US locale JSON; new tests/qml/test_local_resources_ui.py plus bounded existing navigation/preferences tests. No unrelated redesign, Provider/naming/file-operation changes or Golden edits.
+
+1. RED with real QObject/controller bindings: permanent cloud/local choice distinct from smart/template; actual clicks immediately call the shared coordinator; cancellation does not select CLOUD; readiness text follows the actual service/controller state; unavailable controller is visibly unavailable, not faux ready.
+2. Bar sits below title in the content column, respecting the existing navigation and minimum window. Show current selected mode plus clear readiness/status. Switching to LOCAL immediately closes future cloud admission; visible wording discloses already-sent requests cannot be recalled. CLOUD requires an explicit user click.
+3. Preferences card after General shows fixed model/runtime, verified versus acquired/remaining bytes, storage, source hosts and public-download consent. Actions use the accepted controller: download-and-enable, exact offline resource-folder import, prepare existing, pause/cancel, exact-item repair and retained-owner cleanup as applicable. No arbitrary executable or user manifest selector.
+4. Do not conflate Settings Save/Cancel with immediate processing/resource actions. First-use missing state directly explains networking for public resources; download starts only on explicit consent. Pause/cancel is pending until the real owner drains. AVAILABLE says verified but not enabled; failure/recovery makes next safe action clear without auto fallback or destructive cleanup.
+5. Strings directly visible, wrapped, focusable, CJK-capable; no tooltip-only essential instruction. Three locales and 1000x700/900x640 must fit with real scrolling. All runtime warnings must be captured; source-string checks cannot replace clicks/state assertions.
+6. Root performs Windows native click/CJK/scroll/overlap captures in qa-current/local-privacy only. Formal Golden changes, if necessary, require separate scoped approval; do not hide default feature from production to manufacture an unchanged Golden result.
+
+## Task 3 — actual managed product acceptance and manuals
+
+Use the existing rehashed public artifacts and locally synthetic/no-privacy corpus, not cloud mocks as semantic proof. Preserve September30 successful scan/video/blank evidence; new runs verify the actual composed product flow rather than repeating protocol repair.
+
+- Explicit offline import -> pinned verification -> actual local self-check -> selected LOCAL/READY using the same product controller/service. Inspect genuine owner cleanup and AppContainer capability/traffic evidence within the authorized scope; no system-security modifications.
+- Batch smart and template, output language independent of interface, suggestions first, real same-volume Apply/Undo, extension/conflict preservation. Watch Review First and Auto Apply share that service/mode; no second cloud path, no self-trigger loop, resource hold visible, no inferred understanding when insufficient.
+- Mode switches, cancel/failure, concurrent Batch/Watch and preparation guard forbidden cloud submissions. Full PDF/video/source paths do not enter inference requests; only prepared local text/image frames. Preserve raw response failures and genuine NOT_READY/unrun distinctions.
+- Update actual offline manuals: 序匣用户手册.html, user-guide-assets/manual-zh-HK.html and user-guide-assets/manual-en-US.html, preserving language navigation. Explain two independent choices, resources/consent/size, storage, offline import, available versus ready, pause/cleanup/recovery, already-sent request boundary, no fallback, cross-volume refusal and truthful hardware limitations. No research-brand/screenshots or controls not present in product.
+
+## Task 4 — current frozen Windows artifact and final regression
+
+Root records exact source HEAD, tests and hash manifest. Bundle only the fixed 18,425,079-byte runtime ZIP/catalog/licenses, not the model weights, QA/private evidence, secrets or development paths. Frozen worker dispatch for preparation must precede GUI startup. Use actual accepted D1/D2 and current packaging entry contracts; no hardcoded QA interpreter/resource paths.
+
+Run the current full non-screenshot suite, formal screenshots with UPDATE_GOLDENS off, acceptance, packaging tests and isolated EXE startup outside repo/CWD. Existing known old-artifact/source mismatch and dead diagnostic keyword compatibility failures must be tested/resolved by actual current artifact/contracts, not waived as passes. Record every raw result, expected skip reason, forbidden attempts, warnings and cleanup threads.
+
+Then actual frozen offline resource preparation/local inference and native GUI minimum-size/CJK/scroll/close. Recompute SHA-256, byte sizes, resource list. Only report verified slices PASS; list genuine remaining permissions/hardware/Golden blockers. No push, release, main merge or cleanup of historical worktrees. Stop when the approved deliverable is complete; no unrelated new feature backlog implementation.

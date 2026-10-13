@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Xuxia 1.0.0 User Manual</title>
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body id="top">
+  <header class="hero">
+    <div class="brand-line"><span class="brand-mark" aria-hidden="true">序</span><h1>Xuxia User Manual</h1></div>
+    <p>Use AI to understand file content and propose clear names, then review before safely renaming, moving, or continuously watching files.</p>
+    <span class="version">For Xuxia 1.0.0 · Windows desktop</span><br>
+    <nav class="language-switch" aria-label="Manual language">
+      <a href="../序匣用户手册.html" lang="zh-CN">简体中文</a>
+      <a href="manual-zh-HK.html" lang="zh-HK">繁體中文（香港）</a>
+      <a href="#top" aria-current="page" lang="en-US">English</a>
+    </nav>
+    <button class="print-button" type="button" onclick="window.print()">Print or save as PDF</button>
+  </header>
+  <div class="layout">
+    <nav class="toc" aria-label="Manual contents"><strong>Contents</strong><ol>
+      <li><a href="#overview">Meet Xuxia</a></li><li><a href="#before-start">Before you begin</a></li>
+	      <li><a href="#provider">Configure Cloud AI</a></li><li><a href="#navigation">Navigation</a></li>
+      <li><a href="#quickstart">Five-minute quick start</a></li><li><a href="#batch">Batch naming</a></li>
+      <li><a href="#states">Task states</a></li><li><a href="#watch">Watch folders</a></li>
+      <li><a href="#templates">Templates and vocabulary</a></li><li><a href="#multimodal">Images, scans, and video</a></li>
+      <li><a href="#limits">Resources, cache, and usage</a></li><li><a href="#privacy">Privacy and data flow</a></li>
+      <li><a href="#undo">Undo and file safety</a></li><li><a href="#troubleshooting">Troubleshooting</a></li>
+      <li><a href="#formats">Supported formats</a></li><li><a href="#faq">FAQ</a></li>
+      <li><a href="#version">Version and boundaries</a></li>
+	      <li><a href="#local-mode">Local privacy and resources</a></li>
+    </ol></nav>
+    <main>
+      <section class="chapter" id="overview">
+        <h2>1. Meet Xuxia</h2>
+        <p class="lead">Xuxia helps organise downloads, receipts, project documents, photographs, scans, and video. It separates suggestion generation from file operations: a proposed name is not written to disk until an allowed Apply action occurs.</p>
+        <div class="grid">
+          <div class="mini-card"><h3>What it can do</h3><ul>
+            <li>Read text, metadata, and available visual content from supported files.</li>
+	            <li>Use a ready local model, or the cloud AI Provider you explicitly select, for structured fields or a grounded smart name.</li>
+            <li>Use exact template fields or a specific contextual summary, with manual editing in either mode.</li>
+            <li>Rename or move one file at a time and keep Undo history for successful operations.</li>
+            <li>Watch selected folders and route new files through review-first or guarded automatic processing.</li>
+          </ul></div>
+          <div class="mini-card"><h3>What it does not do silently</h3><ul>
+            <li>Importing, extracting content, or editing a suggestion does not rename a disk file.</li>
+            <li>You do not need to configure several Providers at once.</li>
+            <li>API keys are not written into the ordinary settings file.</li>
+            <li>A complete video is not uploaded for visual naming.</li>
+            <li>Clearing the workspace is never treated as Undo.</li>
+          </ul></div>
+        </div>
+        <div class="callout warning"><strong>Learn with recoverable copies</strong>For a first run, use a few test files that you can restore. Check the naming mode, destination, language, and output before processing important material.</div>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="before-start">
+        <h2>2. Before you begin</h2>
+        <ol class="steps">
+          <li><strong>Check the environment.</strong> Use a supported Windows desktop system and make sure your Windows account can read and write the source and destination folders.</li>
+	          <li><strong>Choose where analysis runs.</strong> Local privacy needs no Provider account or Test connection; prepare resources as described in the local chapter. Only Cloud AI requires an API key, available model name, and Base URL from a Provider with suitable capabilities.</li>
+	          <li><strong>Prepare network access or offline resources.</strong> Scanning, extraction, frame selection, and file operations are local. Cloud requests need access to the selected Provider. A first download of public local resources also needs separate network consent; the supported offline import avoids that download.</li>
+          <li><strong>Start the application.</strong> Open <code>Xuxia.exe</code> from the installation folder. No developer tools or command line are required.</li>
+        </ol>
+        <div class="callout privacy"><strong>Credential boundary</strong>The API key is stored through Windows Credential Manager. Ordinary settings retain non-secret choices such as Provider, model, quality, and resource limits.</div>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="provider">
+	        <h2>3. Configure Cloud AI</h2>
+	        <p>This chapter applies only to Cloud AI; Local privacy needs no cloud account configuration. Cloud AI uses one <strong>current Provider</strong> at a time. You may save several candidate configurations, but cloud processing uses only the configuration explicitly marked current.</p>
+        <ol class="steps">
+          <li>Open <strong>Settings</strong> at the bottom of the left navigation.</li>
+          <li>Choose a built-in Provider preset, or choose Custom for a compatible service.</li>
+          <li>Enter the Base URL, model name, and API key supplied by that service. Remove accidental leading or trailing spaces.</li>
+          <li>Select <strong>Test connection</strong>. The test sends a fixed minimal request to check the address, authentication, and model access.</li>
+          <li>After a successful test, save the configuration and make it the current Provider. Changing connection fields requires another test.</li>
+        </ol>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Capability label</th><th>Meaning</th><th>If unavailable</th></tr></thead>
+          <tbody>
+            <tr><td>Text</td><td>Can use extracted document text and metadata</td><td>The Provider cannot name from that document content</td></tr>
+            <tr><td>Images / scans</td><td>Can receive resized images or locally rendered scan pages</td><td>Use local text and metadata only, or choose a compatible Provider</td></tr>
+            <tr><td>Structured output</td><td>Can return constrained information required by the naming strategy</td><td>The task fails visibly; success is not fabricated</td></tr>
+            <tr><td>Video</td><td>Can analyse locally selected video frames as images</td><td>Visual content is unavailable; the full video is not uploaded instead</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout tip"><strong>Provider catalogues change</strong>Presets supply configuration entry points and capability labels, not a promise that a model is permanently available. Verify the Provider's current catalogue, your account permissions, and the connection result. A custom model cannot be judged by its name alone.</div>
+        <figure class="shot"><img src="en-US/02-provider-settings.png" alt="English Settings page showing Provider capability labels and an edit form"><figcaption>Settings: verify capabilities before entering the address, model, and credential. The capture uses isolated demonstration data.</figcaption></figure>
+        <div class="callout error"><strong>Do not repeatedly save a failed connection</strong>Authentication errors usually indicate a key, permission, model, or address problem. A 429 is service-side rate limiting. For timeouts, check the network, proxy, URL, and Provider status.</div>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="navigation">
+        <h2>4. Navigation</h2>
+        <p>The main window has five short navigation entries. The first three cover everyday work; the last two expose status and configuration.</p>
+	        <p>The permanent processing bar below the title bar selects Cloud AI or Local privacy and shows readiness. It is separate from the Batch naming-mode selector. Settings also contains a Local resources card after General; see the local chapter.</p>
+        <div class="grid">
+          <div class="mini-card"><h3>Batch</h3><p>Batch Naming imports files, generates suggestions, and waits for review before Apply.</p></div>
+          <div class="mini-card"><h3>Watch</h3><p>Watch Folders processes stable new files with Review First or Auto Apply.</p></div>
+          <div class="mini-card"><h3>Templates</h3><p>Naming Templates manages exact-field templates and controlled vocabulary.</p></div>
+          <div class="mini-card"><h3>Status</h3><p>System Status reports local extractors, current cloud connectivity, and diagnostics.</p></div>
+          <div class="mini-card"><h3>Settings</h3><p>Choose interface language, Provider, quality, resource limits, cache, privacy, and diagnostics.</p></div>
+        </div>
+        <figure class="shot"><img src="en-US/01-navigation.png" alt="English Xuxia window showing the five short navigation entries"><figcaption>Main navigation: Batch, Watch, Templates, Status, and Settings.</figcaption></figure>
+        <p>The thin outer border marks the application window and hides when maximised. Drag an unused part of the title bar to move the window; use the top-right controls to minimise, maximise or restore, and close.</p>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="quickstart">
+        <h2>5. Five-minute quick start</h2>
+        <div class="quick-path" aria-label="Quick-start flow"><div>1. Select mode</div><div>2. Language and import</div><div>3. Wait for suggestions</div><div>4. Review or edit</div><div>5. Apply; Undo if needed</div></div>
+        <ol class="steps">
+          <li>Open <strong>Batch</strong> and choose <strong>Name with template</strong> or <strong>AI smart naming</strong>, matching the current UI labels. Template mode remains the default for every new session.</li>
+	          <li>Separately confirm Cloud AI or Local privacy in the processing bar. Local processing needs prepared resources and genuine READY status; cloud processing needs a tested configuration. Either processing choice supports both naming modes.</li>
+          <li>In Template mode choose a template. AI Smart mode does not require a universal-field template. Choose a destination only if files should also move.</li>
+          <li>Drop files into the empty area or select Add files or Add folder. Confirm the filename language before import; folder imports may scan subfolders.</li>
+          <li>Wait for suggestions. Compare every bold proposed name with the grey original name. Use the pencil action to edit; invalid names show an inline error.</li>
+          <li>Apply one reviewed row, or select several and use the top Apply action. Processing remains per-file, so a batch can partly succeed.</li>
+          <li>If a result is wrong, use Undo for the latest eligible operation. Clearing the workspace does not reverse a rename or move.</li>
+        </ol>
+	        <div class="callout warning"><strong>Review First is the safer starting point</strong>Until you know the selected model and naming behaviour, keep suggestions visible for approval before any write to disk. First local preparation may be slow; “five-minute” describes the workflow, not a time guarantee.</div>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="batch">
+        <h2>6. Batch naming</h2>
+        <h3>Import and workspace</h3>
+        <figure class="shot"><img src="en-US/03-batch-empty.png" alt="English Batch page showing the drop area and add-file actions"><figcaption>Batch accepts dropped files or the Add files and Add folder actions.</figcaption></figure>
+        <p>Batch can import several files or folders together. Temporary files, known unsupported formats, and duplicates are skipped with counts. Imported tasks appear as full-width review cards and preserve their import-time naming choices.</p>
+        <h3>Template mode and AI Smart mode</h3>
+        <div class="grid">
+	          <div class="mini-card"><h3>Template mode</h3><p>The selected model extracts the exact fields requested by the selected template. Xuxia assembles them using the template's order, date format, and separator. It suits receipts, contracts, and records with predictable fields.</p></div>
+	          <div class="mini-card"><h3>AI Smart mode</h3><p>The selected model uses file context to propose a specific, recognisable summary. One policy keeps meaningful-part order, date grammar, and underscore formatting consistent across the same batch. Smart mode is not a universal-field template.</p></div>
+        </div>
+        <p>Changing modes affects only later imports; an imported task does not change with the toolbar. Retry always preserves the mode and filename language captured at import. Returning to Template mode preserves the selected template. Existing templates, saved defaults, and Watch configurations are not migrated or rewritten; Watch continues to use its configured template.</p>
+        <figure class="shot"><img src="en-US/11-naming-mode.png" alt="English Batch toolbar showing Template mode and AI Smart mode choices"><figcaption>Naming mode is explicit; Smart mode includes its purpose and a human-review reminder.</figcaption></figure>
+        <h3>Filename language</h3>
+        <div class="callout"><strong>Interface language is not filename language</strong><p>The interface and manual have three languages: Simplified Chinese, Traditional Chinese (Hong Kong), and English. A new Batch import can request filenames in those languages plus Japanese or Spanish. Template mode can follow the template; Smart mode requires an actual language.</p><p>Cancel imports nothing and makes no AI call. The choice applies to new tasks and does not rewrite a template, existing task, suggestion, or disk file. A retry uses the captured language. Organisation names and identifiers may appropriately remain unchanged.</p></div>
+        <figure class="shot"><img src="en-US/12-filename-language.png" alt="English import confirmation dialog listing five filename languages"><figcaption>Confirm filename language before import; it is independent of interface language and manual language.</figcaption></figure>
+        <h3>Toolbar, review cards, and actions</h3>
+        <ul>
+          <li><strong>Mode and template:</strong> mode controls the naming strategy; the template chooser is relevant only in Template mode.</li>
+          <li><strong>Add more:</strong> imports new items without clearing the queue.</li>
+          <li><strong>Destination:</strong> blank means rename in place; a selected folder means rename and move.</li>
+          <li><strong>Search and state filter:</strong> narrow visible cards without deleting hidden tasks.</li>
+          <li><strong>Selection:</strong> row checkboxes and Select all define the next batch action; verify the count.</li>
+        </ul>
+        <figure class="shot"><img src="en-US/04-batch-review.png" alt="English Batch review cards showing task states and proposed names"><figcaption>Review queue: original name, proposal, and state remain visible together.</figcaption></figure>
+        <figure class="shot"><img src="en-US/05-inline-edit.png" alt="English task card showing the inline proposed-name editor"><figcaption>Edit before Apply; the original extension remains separately protected.</figcaption></figure>
+        <p>Stop pending tasks cancels unfinished work. A Provider response already in flight may return, but a cancelled task is not reported as successfully applied. Apply reports independent success and failure counts; one failure does not roll back successful peers.</p>
+        <div class="callout error"><strong>Smart failures require review or retry</strong><p>Insufficient readable content, an invalid response, a generic name, an ungrounded detail, language mismatch, unsafe filename content, or an unsupported policy version causes visible failure. Xuxia does not claim understanding or invent a fallback. A first analysis failure has no suggestion to edit; correct the content or Provider and regenerate. Retry always preserves the mode and filename language captured at import. To use Template mode instead, remove the failed task from the workspace and import it again under the new mode; changing the toolbar does not alter an existing task.</p><p>A smart filename stem is limited to 180 UTF-16 units. An overlong proposal is rejected; Xuxia does not truncate it into an apparently complete name. Only a successfully generated suggestion can be edited before Apply. Mocked tests verify validation and error mapping, not real-model factual understanding or evidence quality.</p></div>
+        <p><strong>Synthetic examples:</strong> <code>2026-09-08_Orion_Launch-Readiness_Review_V2.docx</code> and <code>Harbour-Sunset_Low-Angle_Slow-Motion.mp4</code>. These are synthetic illustrative results, not real model screenshots or promises about output quality.</p>
+        <p><strong>Clear workspace does not Undo</strong> any rename or move already written to disk; it only removes task records from this page.</p>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="states">
+        <h2>7. Task states</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>State</th><th>Meaning</th><th>Typical actions</th></tr></thead>
+          <tbody>
+            <tr><td>Pending</td><td>Queued; extraction or AI analysis has not started</td><td>Cancel or ignore</td></tr>
+	            <tr><td>Analysing</td><td>Extracting content or requesting the selected local model / current cloud Provider</td><td>Cancel</td></tr>
+            <tr><td>Review</td><td>A suggestion exists and needs human review</td><td>Edit, Apply, regenerate, or ignore</td></tr>
+            <tr><td>Undone</td><td>A previous successful Apply was reversed</td><td>Process again if appropriate</td></tr>
+            <tr><td>Applied</td><td>The file was renamed or moved on disk</td><td>Undo</td></tr>
+            <tr><td>Failed</td><td>Extraction, AI, validation, or file operation failed</td><td>Read the reason, correct it, and retry</td></tr>
+            <tr><td>Cancelled</td><td>The user stopped unfinished work</td><td>Re-import or retry</td></tr>
+            <tr><td>Ignored</td><td>The item was deliberately excluded</td><td>Return it to processing if needed</td></tr>
+          </tbody>
+        </table></div>
+        <p>All is a filter view, not a ninth task state. Filters never alter files or silently discard task history.</p>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="watch">
+        <h2>8. Watch folders</h2>
+        <h3>Create a watch</h3>
+        <ol class="steps">
+          <li>Open Watch and select Add folder.</li><li>Choose a source, optional destination, and naming template.</li>
+          <li>Choose whether to include subfolders.</li><li>Select <strong>Review First</strong> or <strong>Auto Apply</strong>.</li>
+          <li>Save and enable the watch. A new file enters processing only after its writes settle.</li>
+        </ol>
+        <div class="grid">
+          <div class="mini-card"><h3>Review First</h3><p>Suggestions enter a separate review queue. Only explicitly approved files are written to disk, which suits important material and unfamiliar templates.</p></div>
+          <div class="mini-card"><h3>Auto Apply</h3><p>A suggestion applies only after confidence, resource, path, conflict, and file-version checks. Failures remain visible and partial failure is not presented as complete success.</p></div>
+        </div>
+        <figure class="shot"><img src="en-US/06-watch-create.png" alt="English Watch page showing the new watched-folder form"><figcaption>Create a watch with source, destination, template, subfolder, and automatic-apply choices.</figcaption></figure>
+        <figure class="shot"><img src="en-US/07-watch-results.png" alt="English Watch review results showing Apply and Ignore actions"><figcaption>Review First results remain separate from the Batch workspace.</figcaption></figure>
+        <p>Xuxia waits for writes to settle, merges repeated events over a short interval, and skips common temporary files. Source and destination relationships are validated so a file moved by Xuxia does not continually trigger the same watch.</p>
+	        <p>Watch and Batch share the processing choice and the same managed local service; changing processing location does not rewrite a Watch template. With partial or unknown coverage, insufficient content, or local resources not ready, Auto Apply conservatively holds the item rather than forcing a rename. Read the reason and review first.</p>
+        <ul>
+          <li><strong>Paused:</strong> manually paused; resume manually when ready.</li>
+          <li><strong>ResourcePaused:</strong> a local queue, concurrency, or repeated-failure guard activated. Address the cause before resuming.</li>
+          <li><strong>Error:</strong> a watcher, path, or permission failed. Repair the folder or permission and try again.</li>
+        </ul>
+        <div class="callout warning"><strong>Auto Apply is not unconditional</strong>It remains subject to extension, path, conflict, version, resource, and backoff safeguards. Batch Smart mode does not change existing Watch configurations.</div>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="templates">
+        <h2>9. Naming Templates and controlled vocabulary</h2>
+        <figure class="shot"><img src="en-US/08-templates.png" alt="English Templates page showing a default formula and edit action"><figcaption>Templates provide scenario presets with a purpose and illustrative output.</figcaption></figure>
+        <figure class="shot"><img src="en-US/09-vocabulary.png" alt="English controlled-vocabulary page showing categories and AI candidates"><figcaption>Built-in terms can be edited; an AI candidate needs an explicit user decision.</figcaption></figure>
+        <p>The Templates entry contains Template and Controlled vocabulary tabs. It does not create another top-level navigation item.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Template</th><th>Use and required information</th><th>Synthetic example</th></tr></thead>
+          <tbody>
+            <tr><td>General Naming (Default)</td><td>Everyday file: date plus title</td><td>2026-09-08_Product-Guide.pdf</td></tr>
+            <tr><td>Simple Title</td><td>Content title only</td><td>Product-Guide.pdf</td></tr>
+            <tr><td>Receipts</td><td>Date, type, and title</td><td>2026-09-08_Invoice_Office-Supplies.pdf</td></tr>
+            <tr><td>Contracts</td><td>Organisation and date</td><td>Orion_2026-09-08_Purchase-Agreement.pdf</td></tr>
+            <tr><td>Projects</td><td>Project, date, and title</td><td>Website-Refresh_2026-09-08_Requirements.docx</td></tr>
+            <tr><td>Study</td><td>Subject and title</td><td>English_Reading-Notes.pdf</td></tr>
+            <tr><td>Papers</td><td>Author, year-month, and title</td><td>Lee_2026-09_Image-Recognition.pdf</td></tr>
+            <tr><td>Photos and videos</td><td>Subject, date, visual title; needs vision</td><td>Travel_2026-09-08_Harbour-Sunset.jpg</td></tr>
+            <tr><td>Versioned documents</td><td>Project, title, explicit version</td><td>Website-Refresh_Design_V2.docx</td></tr>
+          </tbody>
+        </table></div>
+        <p>Templates can be edited. Upgrades do not overwrite them or recreate a deleted preset. Choosing one never changes a disk file, and the extension is retained. If required organisation, project, author, or version evidence is absent, Xuxia must not invent it; use a simpler template or provide readable content.</p>
+        <div class="callout tip"><strong>Smart mode is not a tenth template</strong>Template mode requests exact fields. AI Smart mode selects specific, evidenced information from context and follows one formatting policy; it does not force every possible field into each filename.</div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Field</th><th>Purpose</th><th>If required but absent</th></tr></thead>
+          <tbody>
+            <tr><td>dcDate</td><td>Document date</td><td rowspan="10">The item needs regeneration or review and cannot silently become an applicable incomplete name.</td></tr>
+            <tr><td>dcTitle</td><td>Core title</td></tr><tr><td>dcSubject</td><td>Subject</td></tr>
+            <tr><td>dcType</td><td>Type</td></tr><tr><td>dcCreator</td><td>Author</td></tr>
+            <tr><td>dcIdentifier</td><td>Identifier</td></tr><tr><td>extOrganization</td><td>Organisation</td></tr>
+            <tr><td>extProject</td><td>Project</td></tr><tr><td>extStatus</td><td>Status</td></tr><tr><td>extVersion</td><td>Version</td></tr>
+          </tbody>
+        </table></div>
+        <p>Adjust field order, date format, separator, output language, and flat or categorised organisation. If a saved default template was deleted, Settings blocks saving until you choose again instead of silently substituting another.</p>
+        <p>Subject, organisation, project, status, and type vocabulary can be searched, filtered, added, edited, or removed. An AI candidate never silently enters saved vocabulary: use it once, accept it after review, or reject it.</p>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="multimodal">
+        <h2>10. Images, scanned documents, and video</h2>
+        <div class="flow" aria-label="Local multimodal preprocessing flow"><span>Read locally</span><span>Resize, render, or select frames</span><span>Apply page and frame limits</span><span>Send necessary payload</span><span>Receive constrained output</span></div>
+	        <p><strong>Images:</strong> Xuxia corrects orientation, handles transparency, and limits dimensions locally. A resized image goes to the ready local vision model, or in Cloud AI to a Provider with vision. The original is not modified.</p>
+        <p><strong>Scanned PDF:</strong> a text layer is preferred. A safely limited number of scan pages can be rendered locally and sent as resized images; pages beyond the limit are not rendered without bound.</p>
+        <p><strong>Video:</strong> Xuxia selects ordered representative key frames locally and analyses those as images. Economy, Balanced, and High quality typically use about 4, 6, and 8 frames, subject to configured guards. Xuxia <strong>does not upload a complete video</strong>.</p>
+        <div class="callout warning"><strong>Degradation remains visible</strong>If the current Provider cannot accept images, Xuxia does not pretend that an image, scan, or video frame received visual analysis.</div>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="limits">
+        <h2>11. Resource limits, cache, and usage</h2>
+        <p>These settings constrain local work and request size. They do not describe or predict third-party monetary billing.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Setting</th><th>Control</th><th>Guidance</th></tr></thead>
+          <tbody>
+            <tr><td>Maximum file size</td><td>Blocks oversized analysis; range 1–500 MB</td><td>Start with the default</td></tr>
+            <tr><td>PDF page limit</td><td>Limits scan rendering and pages sent</td><td>Use enough representative pages</td></tr>
+            <tr><td>Video frame limit</td><td>Limits frame selection and request size</td><td>Ordinary footage rarely needs more than the high default</td></tr>
+            <tr><td>Concurrency</td><td>Limits simultaneous analysis</td><td>Reduce for slower networks or computers</td></tr>
+            <tr><td>Retries</td><td>Limits eligible network or service retries</td><td>Authentication faults require correction</td></tr>
+          </tbody>
+        </table></div>
+        <p>Economy, Balanced, and High quality change image size, frame count, request size, and required capability. They do not guarantee basic, professional, or perfect naming.</p>
+        <p>Settings exposes local cache status and a clear action, and the cache component remains available to compatible flows. However, current AI Smart Batch analysis does not read or write a suggestion cache. Do not infer from the cache interface that smart suggestions are cached; regeneration performs analysis for the current task.</p>
+	        <p>Local and cloud caches are partitioned. Clearing suggestion cache does not remove local model resources and is not a promise to free memory or uninstall the service. Resource readiness and non-monetary usage are different information.</p>
+        <p>Usage reports Provider, request count, input tokens, and output tokens. No history shows an empty state; unavailable data is reported as unavailable, not fabricated as zero.</p>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="privacy">
+        <h2>12. Privacy and data flow</h2>
+	        <div class="callout privacy"><strong>Check the processing choice</strong>In Local privacy, Xuxia does not upload file content or naming requests. Cloud AI sends the content needed for naming to your configured third-party Provider. The table below describes cloud payloads only. Local preprocessing alone does not mean zero cloud transfer; public-resource download is a separately consented network activity.</div>
+        <div class="table-wrap"><table>
+	          <thead><tr><th>Content</th><th>Processed locally</th><th>May be sent to the current Provider in Cloud AI only</th></tr></thead>
+          <tbody>
+            <tr><td>Document or spreadsheet</td><td>Text and metadata extraction</td><td>Necessary extracted text, metadata, and naming context</td></tr>
+            <tr><td>Image</td><td>Orientation, transparency, resizing</td><td>Resized image and necessary metadata</td></tr>
+            <tr><td>Scanned PDF</td><td>Render pages within the configured limit</td><td>Resized page images and necessary context</td></tr>
+            <tr><td>Video</td><td>Select about 4–8 ordered key frames locally</td><td>Frame images and summary context; never the complete video</td></tr>
+          </tbody>
+        </table></div>
+        <ul>
+          <li>The API key belongs only in the system credential store and actual request layer, not ordinary logs or diagnostic bundles.</li>
+          <li>Provider payloads use extracted results, resized images, or selected frames and should not contain a complete source path.</li>
+          <li>Diagnostics redact usernames, drive paths, network-share paths, and suspected credential values.</li>
+          <li>Retention, training policy, and regional compliance are controlled by the Provider; check that account's current settings and terms.</li>
+	          <li>The local promise concerns Xuxia, not other applications or operating-system sync, and does not mean the whole computer is offline. The managed child has no network capabilities; an arbitrary local port is not proof of privacy.</li>
+	          <li>Local logs and diagnostics omit file content, keys, and source paths; inspect a bundle before sharing. There is no hidden telemetry or silent cloud fallback after failure.</li>
+        </ul>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="undo">
+        <h2>13. Undo and file safety</h2>
+        <ul>
+          <li>Import, extraction, suggestion generation, and manual suggestion editing do <strong>not</strong> write a disk filename.</li>
+          <li>Apply and Auto Apply perform an actual rename or move.</li>
+          <li>Undo restores the latest eligible successful records in reverse order.</li>
+        </ul>
+        <h3>Preflight protection</h3>
+        <ul>
+          <li><strong>Extension:</strong> a proposal cannot replace the original extension with a different type.</li>
+          <li><strong>Path boundary:</strong> the destination stays in an allowed directory; links and similar prefixes cannot bypass the check.</li>
+          <li><strong>File version:</strong> if size or modification time changed after analysis, an old suggestion cannot apply to new content.</li>
+          <li><strong>Conflict:</strong> an existing target is safely numbered or reported as failure; it is not silently overwritten.</li>
+          <li><strong>Per-file result:</strong> every file has its own outcome and remains bound to the correct task and batch.</li>
+	          <li><strong>Same-volume limit:</strong> Apply and Undo currently support same-volume operations only. Cross-volume moves fail safely and leave the source file, with no copy-then-delete fallback. Directory links, unsafe identity, changed extensions, and occupied targets are refused; existing files are not overwritten.</li>
+        </ul>
+        <div class="callout warning"><strong>Undo is not a backup system</strong>If another program deletes, replaces, locks, or edits a file after Apply, Undo can fail. Important data still needs an independent backup.</div>
+        <p>Closing or clearing the workspace does not reverse disk operations and is not a substitute for Undo. Successful and failed restores remain individually visible.</p>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="troubleshooting">
+        <h2>14. Diagnostics and troubleshooting</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Symptom</th><th>Likely cause</th><th>Response</th></tr></thead>
+          <tbody>
+            <tr><td>Authentication failed</td><td>Invalid key, model, permission, or URL</td><td>Copy values again, confirm access, and retest</td></tr>
+            <tr><td>429 or temporary error</td><td>Provider rate limit or outage</td><td>Allow backoff, reduce concurrency; do not retry forever</td></tr>
+            <tr><td>Timeout</td><td>Network, proxy, URL, or service status</td><td>Restore Provider access and test again</td></tr>
+            <tr><td>No visual suggestion</td><td>No image capability or a local limit</td><td>Read the task reason; change Provider or a safe limit</td></tr>
+            <tr><td>Smart result generic or ungrounded</td><td>Insufficient content or invalid response</td><td>Correct and regenerate; to change mode, remove the failed task and import it again</td></tr>
+            <tr><td>Smart name too long</td><td>More than 180 UTF-16 stem units</td><td>Regenerate; a first failure has no editable name and no automatic truncation occurs</td></tr>
+            <tr><td>Source changed</td><td>External modification after analysis</td><td>Analyse again against current content</td></tr>
+            <tr><td>Conflict or locked file</td><td>Target exists or another program holds it</td><td>Close the program, change destination, or accept safe numbering</td></tr>
+            <tr><td>ResourcePaused</td><td>Queue, concurrency, or repeated-failure guard</td><td>Resolve the cause before resuming</td></tr>
+          </tbody>
+        </table></div>
+        <figure class="shot"><img src="en-US/10-system-status.png" alt="English System Status page listing extraction and visual capabilities separately"><figcaption>System Status does not disguise a degraded component as available.</figcaption></figure>
+        <p>Export a diagnostic bundle from Settings and inspect it before sharing. It describes configuration structure, components, and error categories and should not contain an API key.</p>
+        <div class="callout error"><strong>Never put a key in a screenshot or support message</strong>Report Provider name, model, error category, and exact steps. Even a partly visible API key should not be shared.</div>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="formats">
+        <h2>15. Supported formats</h2>
+        <p>An extension does not prove that a file is complete or genuine. Damaged, encrypted, or disguised files may fail extraction.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Category</th><th>Extensions</th></tr></thead>
+          <tbody>
+            <tr><td>Documents and tables</td><td>PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, TXT, MD, CSV, TSV, RTF, HTML, XML, EPUB, ODT, ODS, ODP</td></tr>
+            <tr><td>Images</td><td>JPG, JPEG, PNG, WebP, GIF, BMP, TIF, TIFF, AVIF</td></tr>
+            <tr><td>Video</td><td>MP4, MOV, M4V, MKV, AVI, WebM, TS, MTS, M2TS, WMV, FLV, 3GP, 3G2, MXF, MPG, MPEG, OGV</td></tr>
+          </tbody>
+        </table></div>
+	        <p>Import support does not guarantee the selected model's visual understanding. Xuxia first attempts local extraction, then checks local readiness or cloud Provider capability to choose a compatible route or report visible degradation.</p>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="faq">
+        <h2>16. Frequently asked questions</h2>
+	        <h3>Must I use a particular Provider?</h3><p>Not for cloud processing: a preset or compatible Custom Provider can be used if its model, URL, permissions, and structured output match the task. The first local release uses the fixed Qwen model described in the local chapter, not arbitrary models.</p>
+        <h3>Why did a suggestion not rename my file?</h3><p>Suggestion generation and editing do not write to disk. Review First requires explicit Apply.</p>
+        <h3>How do the naming modes differ?</h3><p>Template mode extracts exact fields and assembles a selected formula. AI Smart mode uses context for a concise, specific summary under one consistent policy. It is not a universal template, and Template mode remains the default.</p>
+        <h3>Does changing interface language translate filenames?</h3><p>No. Interface language, manual language, and filename language are independent. Choose the filename language during Batch import; existing tasks and disk files are not rewritten.</p>
+	        <h3>Why can an image import but not be recognised?</h3><p>For local processing check service readiness; for cloud processing check Provider image capability. Also check size, page, and frame limits. Text capability cannot substitute for vision.</p>
+        <h3>Why did Watch not apply?</h3><p>It may use Review First; the file may still be changing; or confidence, resource, path, conflict, or version checks may have blocked it.</p>
+        <h3>How do I restore a renamed file?</h3><p>Use Undo. External changes, occupancy, or path conflict can make an individual restore fail.</p>
+        <h3>Does Xuxia include Provider credit?</h3><p>No. Xuxia supplies no cloud credit or monetary bill. Your third-party account is governed by that service; Xuxia records non-monetary request usage only.</p>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+
+      <section class="chapter" id="version">
+        <h2>17. Version and support boundaries</h2>
+        <p>This manual describes <strong>Xuxia 1.0.0 for Windows desktop</strong> and behaviour visible through the current release entry point.</p>
+        <ul>
+          <li>The initial release is a personal, single-computer tool without account login, team collaboration, cloud synchronisation, payment, licensing, or an automatic-update service.</li>
+          <li>Interface and manual languages are Simplified Chinese, English, and Traditional Chinese (Hong Kong). Cancelling a language preview restores the last saved interface language.</li>
+          <li>Filename output additionally supports Japanese and Spanish in Batch. This does not add Japanese or Spanish application interfaces.</li>
+          <li>Provider names, catalogues, and URLs can change. Use a current capability-matched configuration and Test connection.</li>
+          <li>This manual is fully local: no network font, script, translation service, or CDN is used. Printing includes the currently open language only.</li>
+        </ul>
+        <p>If interface and manual differ, confirm the application version, then report the entry point, exact steps, task state, and sanitised error category.</p>
+        <a class="back-top" href="#top">Back to top</a>
+      </section>
+	      <section class="chapter" id="local-mode">
+	        <h2>18. Local privacy and resource preparation</h2>
+	        <h3>Two independent choices: how to name, and where to analyse</h3>
+	        <p><strong>Template mode / AI Smart mode</strong> selects the naming strategy; <strong>Cloud AI / Local privacy</strong> selects the processing location. Either processing choice supports both naming modes without rewriting saved templates or defaults. Interface language and the filename language confirmed at import remain separate.</p>
+	        <p>Select Local privacy in the permanent bar below the title bar, shared by Batch and Watch. Selecting LOCAL immediately blocks future cloud requests even when resources are missing, preparing, failed, paused, or cancelled. Already-sent cloud requests cannot be recalled. Local failure never automatically falls back to cloud; only an explicit Cloud AI choice reopens admission for new cloud requests.</p>
+	        <div class="callout warning"><strong>Settings is not a mode-confirmation gate</strong>The processing choice is saved separately and immediately; resource actions also take effect immediately. Settings Save or Cancel does not undo them. Cancelling preparation does not select cloud. If saving the choice fails, use “Retry saving choice”; cancelling Settings does not reverse the current cloud-blocking choice.</div>
+	        <h3>First use: inspect, then explicitly authorise</h3>
+	        <ol class="steps">
+	          <li>Select Local privacy, open <strong>Settings → General</strong>, and scroll to <strong>Local resources</strong>. <strong>Check resources</strong> inspects existing state without downloading or running a model.</li>
+	          <li>Read the model, pinned version, resource location, source hosts, verified bytes, acquired bytes, and remaining-transfer hints. The first local release uses the <strong>Qwen/Qwen3.5-4B</strong> instruction model with <strong>Q4_K_M</strong> and a vision projector, on the Windows x64 CPU runtime <strong>llama.cpp b10885</strong>. It is not a Base model or the cloud Qwen API.</li>
+	          <li>To obtain resources online, choose <strong>Download and enable</strong>. This opens visible consent; only <strong>I agree — download public resources</strong> starts the download. Fixed public source hosts are <code>github.com</code> and <code>huggingface.co</code>. This request does not send documents, names, paths, naming prompts or keys. “Not now” refuses the download.</li>
+	          <li>Instead, choose <strong>Import offline folder</strong> and select a folder containing the supported fixed file set: <code>llama-b10885-bin-win-cpu-x64.zip</code>, <code>Qwen3.5-4B-Q4_K_M.gguf</code>, and <code>mmproj-F16.gguf</code>. They must match the pinned versions, sizes, and checksums. This accepts the known resources, not arbitrary models, executables, or user-defined catalogues. Import reads and verifies, and does not alter the original folder.</li>
+	          <li>With existing resources, choose <strong>Prepare existing resources</strong>. Xuxia verifies them, starts the same managed service used by Batch and Watch, and performs a real self-check. No command line, developer tools, or self-started server is needed. Verified offline resources are reused rather than downloaded again.</li>
+	          <li>Wait for <strong>Local privacy enabled — service self-check passed</strong> (READY) in the processing bar before importing a few recoverable files. Check every suggestion, evidence, and coverage warning before Apply. If not ready, address the resource state; “resources available” does not mean “model enabled”.</li>
+	        </ol>
+	        <h3>Size, speed, and state are not guarantees</h3>
+	        <p>The fixed resources total <code>3431786583</code> bytes, about 3.43 GB in decimal units, including the <code>18425079</code>-byte runtime ZIP supplied with the app. Before reuse, the model and vision transfer upper bound is <code>3413361504</code> bytes. Runtime extraction adds <code>46749981</code> bytes, and each run also needs staging space. The resource total is therefore not an exact free-space requirement; allow space based on the displayed location, hints, and actual disk capacity.</p>
+	        <p>Resources live under the current operating-system user's data directory, <code>Xuxia/local-ai</code>, separate from the program directory; use the location shown in the card. Byte figures are previous verified, observed, or advisory snapshots. Received bytes are not verified or guaranteed retained bytes, and “remaining” is not a final storage figure. Hardware admission is not a performance guarantee: there is no universal minimum RAM, startup-time, or speed promise. First preparation and inference may be slow; hardware and content affect result quality.</p>
+	        <div class="table-wrap"><table><thead><tr><th>Resource / service state</th><th>Meaning</th></tr></thead><tbody>
+	          <tr><td>MISSING / PARTIAL</td><td>Missing or incomplete resources; not enabled.</td></tr>
+	          <tr><td>TRANSFERRING / VERIFYING / PREPARING</td><td>Transfer, verification, or preparation is running. Progress is not permission to analyse immediately.</td></tr>
+	          <tr><td>AVAILABLE</td><td>Verified, not enabled. The same service still needs to complete preparation.</td></tr>
+	          <tr><td>READY</td><td>The current local service passed a real self-check and Local privacy remains selected; new analysis can run.</td></tr>
+	          <tr><td>FAILED / CANCELLED / PAUSED</td><td>Failure, cancellation, or pause is not readiness. LOCAL stays selected; it does not become cloud.</td></tr>
+	          <tr><td>CLEANUP_PENDING / RECOVERY_REQUIRED</td><td>Cleanup is incomplete or conservative recovery is required. Do not clear resource or journal folders yourself.</td></tr>
+	        </tbody></table></div>
+	        <h3>Pause, cancel, repair, and recovery</h3>
+	        <p>Pause and Cancel resource operation request an owner acknowledgement; a cancellation request does not mean work has ended immediately. Wait for the pending state to finish before taking an available new action. A retained, known current owner may permit <strong>Retry current-owner cleanup</strong>. An unknown previous owner, dirty journal, or uncertain ownership needs conservative recovery: preserve evidence and seek support, without automatic reset or deletion.</p>
+	        <p><strong>Quarantine current damaged item</strong> handles only the exact recognised damaged or partial pinned resource and retains failed evidence. It does not delete documents, unknown files, or journals. It is not a clear-all, service-uninstall, or free-memory action. Do not delete unknown files to manufacture “ready” status.</p>
+	        <h3>Local coverage and filename review</h3>
+	        <p>Text, images, scanned PDF pages, and video keyframes are prepared locally. Complete PDFs, complete videos, or source paths do not enter model requests; only necessary extracted text and image frames do. Video remains frame analysis and does not guarantee understanding of the entire video. Blank, unreadable, or incomplete coverage produces a warning or refusal; insufficient content never becomes a fabricated suggestion. Long content and partial or unknown coverage need review, and Auto Apply conservatively holds such items.</p>
+	        <p>Every AI output still passes schema, evidence, and filename-safety validation. Except for explicitly configured Watch Auto Apply, outputs remain suggestions until Apply. Chinese orthography normalisation affects only newly generated Chinese names: Simplified Chinese uses simplified forms and Hong Kong output uses Hong Kong traditional forms. It does not rewrite sources, evidence, saved templates, or history. Orthography conversion is not guaranteed semantic translation; review proper names. Other languages, ASCII, dates, versions, and extensions are retained.</p>
+	        <div class="callout privacy"><strong>The exact privacy boundary</strong>In Local privacy, Xuxia does not upload file content or naming requests. Its trusted managed child has no network capabilities; the privacy basis is not arbitrary localhost. This does not control other applications or operating-system sync, or block the whole computer's network. Public-resource download is still a separately consented internet activity. Local and cloud caches are partitioned; logs and diagnostics omit content, keys, and source paths. Failure never silently switches to cloud.</div>
+	        <div class="callout"><strong>Reading the existing screenshots</strong>The images in this manual are earlier cloud-interface workflow illustrations with synthetic illustrative results. They are not current local-model screenshots and do not prove resource READY or semantic quality. Follow this chapter's text for the local processing bar and resource card. A supported language option is not evidence that every language has been verified with a real model.</div>
+	        <a class="back-top" href="#top">Back to top</a>
+	      </section>
+	    </main>
+  </div>
+	  <footer class="footer">Xuxia 1.0.0 · Offline user manual · Updated 2026-10-12</footer>
+</body>
+</html>

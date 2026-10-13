@@ -1,0 +1,24 @@
+module ui_qml
+AppButton 1.0 AppButton.qml
+AppComboBox 1.0 AppComboBox.qml
+singleton DesignTokens 1.0 DesignTokens.qml
+Shell 1.0 Shell.qml
+TitleBar 1.0 TitleBar.qml
+NavBar 1.0 NavBar.qml
+PageRouter 1.0 PageRouter.qml
+BatchPage 1.0 BatchPage.qml
+DeferredPage 1.0 DeferredPage.qml
+BatchToolbar 1.0 BatchToolbar.qml
+DropZone 1.0 DropZone.qml
+TaskCard 1.0 TaskCard.qml
+TaskQueue 1.0 TaskQueue.qml
+InlineEdit 1.0 InlineEdit.qml
+ApplyProgress 1.0 ApplyProgress.qml
+StatusChip 1.0 StatusChip.qml
+ComponentStatusRow 1.0 ComponentStatusRow.qml
+StatusModal 1.0 StatusModal.qml
+FileCardError 1.0 FileCardError.qml
+BatchError 1.0 BatchError.qml
+AppToast 1.0 AppToast.qml
+BlockingModal 1.0 BlockingModal.qml
+DiagnosticsDialog 1.0 DiagnosticsDialog.qml
