@@ -93,59 +93,24 @@ def section(title: str):
 section("1. IMPORTS — All modules")
 
 def test_imports():
-    # Models
-    from src.models.file_item import FileItem, FileStatus
-    from src.models.rename_record import RenameRecord
-    from src.models.template import NamingTemplate, TemplateField
-    from src.models.watch_config import WatchConfig, WatchMode
-    from src.models.app_config import AppConfig
-    check("models/file_item", True)
-    check("models/rename_record", True)
-    check("models/template", True)
-    check("models/watch_config", True)
-    check("models/app_config", True)
-
-    # Core
+    from src.models import FileItem, RenameRecord, AppConfig
     from src.core.file_scanner import FileScanner
     from src.core.content_extractor import extract
-    from src.core.ai_engine import AIEngine
-    from src.core.rename_engine import RenameEngine
+    from src.core.template_model import Template, TemplateField
+    from src.core.template_renderer import TemplateRenderer
+    from src.core.rename_executor import RenameExecutor
+    from src.core.undo_manager import UndoManager
     from src.core.rename_history import RenameHistory
-    from src.core.template_engine import TemplateEngine
-    from src.core.folder_watcher import FolderWatcher
-    from src.core.organization_engine import organize, RULE_HANDLERS
-    check("core/file_scanner", True)
-    check("core/content_extractor", True)
-    check("core/ai_engine", True)
-    check("core/rename_engine", True)
-    check("core/rename_history", True)
-    check("core/template_engine", True)
-    check("core/folder_watcher", True)
-    check("core/organization_engine", True)
-
-    # Providers
-    from src.providers.base import BaseProvider
-    from src.providers.deepseek import DeepSeekProvider
-    from src.providers.openai import OpenAIProvider
-    from src.providers.claude import ClaudeProvider
-    from src.providers.factory import create_provider
-    check("providers/base", True)
-    check("providers/deepseek", True)
-    check("providers/openai", True)
-    check("providers/claude", True)
-    check("providers/factory", True)
-
-    # Utils
+    from src.controllers.watch_controller import WatchController
+    from src.core.watch_config import WatchConfig, WatchConfigStore
+    from src.providers.presets import create_adapter
+    from src.providers.factory import is_legacy_provider
+    from src.config import load_config, save_config, get_templates_dir
     from src.utils.constants import SUPPORTED_EXTENSIONS, DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPLATE
     from src.utils.file_utils import sanitize_filename, resolve_conflict, normalize_path
     from src.utils.logger import setup_logging
-    check("utils/constants", True)
-    check("utils/file_utils", True)
-    check("utils/logger", True)
-
-    # Config
-    from src.config import load_config, save_config, get_templates_dir
-    check("config", True)
+    check("Imports.current_public_surface", True)
+    check("Imports.legacy_brand_gate", is_legacy_provider("openai") and is_legacy_provider("claude"))
 
 test_imports()
 
@@ -155,8 +120,8 @@ section("2. DATA MODELS — CRUD")
 def test_models():
     from src.models.file_item import FileItem, FileStatus
     from src.models.rename_record import RenameRecord
-    from src.models.template import NamingTemplate, TemplateField
-    from src.models.watch_config import WatchConfig, WatchMode
+    from src.core.template_model import Template, TemplateField
+    from src.core.watch_config import WatchConfig, WatchMode, WatchStatus
     from src.models.app_config import AppConfig
 
     # FileItem
@@ -191,17 +156,16 @@ def test_models():
     check("RenameRecord.from_json.new_path", parsed.new_path == record.new_path)
     check("RenameRecord.from_json.batch_id", parsed.batch_id == "batch-001")
 
-    # NamingTemplate
-    tmpl = NamingTemplate(name="test", pattern="{date}_{title}.{ext}")
-    check("NamingTemplate.name", tmpl.name == "test")
-    check("NamingTemplate.pattern", tmpl.pattern == "{date}_{title}.{ext}")
-    check("NamingTemplate.field_names", "date" in tmpl.field_names and "title" in tmpl.field_names)
-
-    # WatchConfig
-    watch = WatchConfig(source_dir="D:/watch", mode=WatchMode.REVIEW_FIRST)
-    check("WatchConfig.source", watch.source_dir == "D:/watch")
-    check("WatchConfig.mode", watch.mode == WatchMode.REVIEW_FIRST)
-    check("WatchConfig.active", watch.active == True)
+    # Current immutable template and watch models
+    tmpl = Template(name="test", pattern="{dcDate}_{dcTitle}")
+    check("Template.name", tmpl.name == "test")
+    check("Template.pattern", tmpl.pattern == "{dcDate}_{dcTitle}")
+    check("Template.fields", {"dcDate", "dcTitle"} <= {field.dc_name for field in tmpl.fields})
+    with tempfile.TemporaryDirectory(prefix="acceptance-watch-model-") as directory:
+        watch = WatchConfig(id="model-watch", source_dir=directory, mode=WatchMode.REVIEW_FIRST)
+        check("WatchConfig.source", watch.source_dir == str(Path(directory).resolve()))
+        check("WatchConfig.mode", watch.mode == WatchMode.REVIEW_FIRST)
+        check("WatchConfig.active", watch.status == WatchStatus.ACTIVE)
 
     # AppConfig
     config = AppConfig()
@@ -330,51 +294,34 @@ def test_extractor():
 test_extractor()
 
 # ============================================================================
-section("6. TEMPLATE ENGINE")
+section("6. FORMAL TEMPLATE RENDERER")
 
 def test_template_engine():
-    from src.core.template_engine import TemplateEngine
-    from src.models.template import NamingTemplate
-    from src.models.file_item import FileItem
+    from dataclasses import replace
+    from src.core.template_model import Template, DateFormat, Separator
+    from src.core.template_renderer import TemplateRenderer, RenderStatus
+    from src.core.naming_fields import NamingFields
 
-    engine = TemplateEngine()
-
-    # Parse
-    fields = TemplateEngine.parse("{date}_{title}_{tags}.{ext}")
-    check("Template.parse", set(fields) == {"date", "title", "tags", "ext"},
-          f"got: {fields}")
-
-    # Render
-    tmpl = NamingTemplate(
-        name="test",
-        pattern="{date}_{title}.{ext}",
-        separator="_",
-        date_format="%Y-%m-%d",
-    )
-    item = FileItem(original_path=Path("D:/test/report.pdf"), file_type="pdf")
-    ai_fields = {"date": "2025-07-26", "title": "季度报告", "tags": ["重要", "2025"]}
-
-    result = engine.render(tmpl, ai_fields, item)
-    check("Template.render.basic", result == "2025-07-26_季度报告.pdf", f"got: {result}")
-
-    # Render with tags
-    tmpl2 = NamingTemplate(pattern="{date}_{tags}.{ext}", separator="-")
-    result2 = engine.render(tmpl2, ai_fields, item)
-    check("Template.render.tags", "重要-2025" in result2, f"got: {result2}")
-
-    # Render with unknown date
-    result3 = engine.render(tmpl, {"date": "unknown", "title": "test"}, item)
-    check("Template.render.unknown_date", "test" in result3, f"got: {result3}")
-
-    # Render with list tags (use template WITH {tags} in pattern)
-    tmpl_tags = NamingTemplate(pattern="{date}_{tags}.{ext}", separator="_")
-    result4 = engine.render(tmpl_tags, {"date": "2025-01-01", "title": "doc", "tags": ["a", "b", "c"]}, item)
-    check("Template.render.list_tags", "a_b_c" in result4, f"got: {result4}")
-
-    # Sanitization
-    tmpl3 = NamingTemplate(pattern="{date}_{title}.{ext}")
-    dirty = engine.render(tmpl3, {"date": "2025-01-01", "title": "test<file>name"}, item)
-    check("Template.sanitize", "<" not in dirty and ">" not in dirty, f"got: {dirty}")
+    template = Template(name="Acceptance", pattern="{dcDate}_{dcTitle}")
+    fields = NamingFields(dcDate="2025-07-26", dcTitle="Quarterly report", dcSubject="Sales")
+    result = TemplateRenderer.render(template, fields, ".PDF")
+    check("Template.render.exact_date_extension", result.rendered_name == "2025-07-26_Quarterly_report.pdf", repr(result))
+    check("Template.render.ready", result.status == RenderStatus.READY and result.can_apply)
+    hyphen = TemplateRenderer.render(replace(template, separator=Separator.HYPHEN), fields, "txt")
+    check("Template.render.separator", hyphen.rendered_name == "2025-07-26-Quarterly-report.txt", repr(hyphen))
+    compact = TemplateRenderer.render(replace(template, date_format=DateFormat.YYYYMMDD),
+                                      replace(fields, dcDate="20250726"), ".pdf")
+    check("Template.render.compact_date", compact.rendered_name == "20250726_Quarterly_report.pdf")
+    for absent in ("dcDate", "dcTitle"):
+        missing = TemplateRenderer.render(template, replace(fields, **{absent: None}), ".pdf")
+        check(f"Template.missing.{absent}", missing.status == RenderStatus.NEEDS_REGENERATION
+              and not missing.can_apply and missing.missing_fields == (absent,), repr(missing))
+    missing_date = TemplateRenderer.render(template, replace(fields, dcDate=None), ".pdf")
+    check("Template.missing_date_not_fabricated", missing_date.rendered_name == "Quarterly_report.pdf")
+    invalid = TemplateRenderer.render(template, replace(fields, dcDate="unknown"), ".pdf")
+    check("Template.unknown_date_rejected", invalid.status == RenderStatus.INVALID and not invalid.can_apply)
+    sanitized = TemplateRenderer.render(template, replace(fields, dcTitle="test<file>name"), ".pdf")
+    check("Template.sanitize", sanitized.rendered_name == "2025-07-26_testfilename.pdf")
 
 test_template_engine()
 
@@ -386,7 +333,7 @@ def test_history():
     from src.models.rename_record import RenameRecord
 
     # Use a test file
-    test_file = PROJECT_ROOT / "rename_history" / "_test_history.jsonl"
+    test_file = _SAFE_CONFIG_DIR / "_test_history.jsonl"
     if test_file.exists():
         test_file.unlink()
 
@@ -461,85 +408,119 @@ def test_history():
 test_history()
 
 # ============================================================================
-section("8. RENAME ENGINE — Validation & Conflicts")
+section("8. NATIVE APPLY / UNDO — Content, Association & Conflicts")
 
 def test_rename_engine():
-    from src.core.rename_engine import RenameEngine
+    from src.core.rename_executor import RenameExecutor
+    from src.core.preflight_service import PreflightService
+    from src.core.rename_plan import RenamePlan, SourceFingerprint
     from src.core.rename_history import RenameHistory
-    from src.models.file_item import FileItem, FileStatus
+    from src.core.undo_manager import UndoManager
     from src.utils.file_utils import sanitize_filename, resolve_conflict
 
-    # Sanitization
-    check("Sanitize.illegal_chars", sanitize_filename("test<file>.txt") == "test_file_.txt",
-          sanitize_filename("test<file>.txt"))
+    check("Sanitize.illegal_chars", sanitize_filename("test<file>.txt") == "test_file_.txt")
     check("Sanitize.leading_dot", sanitize_filename(".hidden") == "hidden")
     check("Sanitize.control_chars", "\x00" not in sanitize_filename("test\x00.txt"))
-
-    # Conflict resolution
-    test_dir = PROJECT_ROOT / "test_files"
-    result = resolve_conflict(test_dir, "季度销售报告_2025Q1.txt")
-    check("Conflict.existing_file", result != "季度销售报告_2025Q1.txt",
-          f"got: {result}")
-    check("Conflict.still_txt", result.endswith(".txt"))
-
-    # Unique name should stay the same
-    result2 = resolve_conflict(test_dir, "unique_filename_xyz123.txt")
-    check("Conflict.unique_name", result2 == "unique_filename_xyz123.txt",
-          f"got: {result2}")
-
-    # RenameEngine creation
-    engine = RenameEngine()
-    check("RenameEngine.create", engine is not None)
-    check("RenameEngine.no_last_batch", engine.last_batch_id is None)
-
-    # Execute with empty list
-    try:
-        engine.execute([])
-        check("RenameEngine.empty_list_should_fail", False)
-    except ValueError as e:
-        check("RenameEngine.empty_list_raises", "没有可重命名的文件" in str(e))
+    with tempfile.TemporaryDirectory(prefix="acceptance-native-") as directory:
+        root = Path(directory)
+        source = root / "original.txt"
+        payload = b"SYNTHETIC ORIGINAL CONTENT"
+        source.write_bytes(payload)
+        collision = root / "renamed.txt"
+        collision.write_bytes(b"DO NOT OVERWRITE")
+        history_path = root / "history.jsonl"
+        history = RenameHistory(history_path)
+        executor = RenameExecutor(PreflightService([str(root)]), history)
+        stamp = source.stat()
+        plan = RenamePlan("native-task", str(source), SourceFingerprint(stamp.st_size, stamp.st_mtime_ns),
+                          "renamed.txt", str(root), ".txt")
+        check("Conflict.existing_file", resolve_conflict(root, "renamed.txt") == "renamed_1.txt")
+        check("Conflict.unique_name", resolve_conflict(root, "unique.txt") == "unique.txt")
+        results = executor.execute([plan], "native-batch")
+        applied = results[0]
+        check("Apply.success", applied.success, str(applied))
+        check("Apply.association", applied.task_id == "native-task" and applied.batch_id == "native-batch")
+        check("Apply.content", Path(applied.new_path).read_bytes() == payload)
+        check("Apply.conflict_no_overwrite", collision.read_bytes() == b"DO NOT OVERWRITE"
+              and Path(applied.new_path).name == "renamed_1.txt" and not source.exists())
+        record = history.get_by_batch("native-batch")[0]
+        check("History.apply_association", record.task_id == "native-task" and record.batch_id == "native-batch"
+              and str(record.new_path) == applied.new_path and bool(record.move_evidence))
+        undo = UndoManager(str(history_path), executor=executor).undo_last_batch()[0]
+        check("Undo.success_association", undo.success and undo.task_id == "native-task" and undo.batch_id == "native-batch", str(undo))
+        check("Undo.restored_original_bytes", source.read_bytes() == payload and not Path(applied.new_path).exists())
+        check("Undo.history_mark", history.get_by_batch("native-batch")[0].undone)
+        stamp = source.stat()
+        wrong = RenamePlan("wrong-extension", str(source), SourceFingerprint(stamp.st_size, stamp.st_mtime_ns),
+                           "incorrect.pdf", str(root), ".txt")
+        rejected = executor.execute([wrong], "rejected-batch")[0]
+        check("Apply.wrong_extension_rejected", not rejected.success and source.read_bytes() == payload
+              and not (root / "incorrect.pdf").exists() and not history.get_by_batch("rejected-batch"))
+        check("Apply.empty", executor.execute([], "empty-batch") == [])
 
 test_rename_engine()
 
 # ============================================================================
-section("9. AI PROVIDERS — Factory & Configuration")
+section("9. CURRENT PROVIDERS — Offline Wire Contracts")
 
 def test_providers():
-    from src.providers.factory import create_provider
-    from src.models.app_config import AppConfig
+    from dataclasses import replace
+    from src.core.provider_presets import FIRST_PHASE_PROVIDER_IDS, create_profile_from_preset
+    from src.core.provider_protocol import ProviderRequest
+    from src.providers.presets import create_adapter
+    from src.providers.openai_compatible import ProviderAdapterConfigurationError, TransportResponse
 
-    # DeepSeek
-    config = AppConfig(provider="deepseek", api_key="sk-test-ds", base_url="https://api.deepseek.com/v1", model="deepseek-v4-pro")
-    provider = create_provider(config)
-    check("Factory.deepseek_type", type(provider).__name__ == "DeepSeekProvider")
-    check("Factory.deepseek_url", "deepseek.com" in provider.base_url)
-    check("Factory.deepseek_model", "deepseek-v4" in provider.model)
+    class FakeTransport:
+        """External boundary only: deterministic wire response, no model quality claim."""
+        def __init__(self):
+            self.calls = []
+        def send(self, **request):
+            self.calls.append(request)
+            return TransportResponse(status_code=200, headers={}, latency_ms=1.0, json_body={
+                "choices": [{"message": {"content": '{"dcTitle": "Synthetic report"}'}, "finish_reason": "stop"}],
+                "model": "synthetic-model",
+                "usage": {"prompt_tokens": 1, "completion_tokens": 2, "total_tokens": 3},
+            })
 
-    # OpenAI
-    config2 = AppConfig(provider="openai", api_key="sk-test-oai", base_url="https://api.openai.com/v1", model="gpt-4o")
-    provider2 = create_provider(config2)
-    check("Factory.openai_type", type(provider2).__name__ == "OpenAIProvider")
-
-    # Claude
-    config3 = AppConfig(provider="claude", api_key="sk-ant-test", base_url="https://api.anthropic.com", model="claude-sonnet-4-20250514")
-    provider3 = create_provider(config3)
-    check("Factory.claude_type", type(provider3).__name__ == "ClaudeProvider")
-
-    # No API key
-    config4 = AppConfig(provider="deepseek", api_key="")
+    request = ProviderRequest(request_id="acceptance-request", task_id="acceptance-task",
+                              extracted_text="Synthetic content", metadata={}, visual_payloads=(),
+                              requested_schema={"type": "object", "properties": {"dcTitle": {"type": "string"}},
+                                                "required": ["dcTitle"], "additionalProperties": False},
+                              locale="en-US", correlation_id="acceptance-correlation")
+    for provider_id in FIRST_PHASE_PROVIDER_IDS:
+        options = {"profile_id": f"acceptance-{provider_id}"}
+        if provider_id == "qwen":
+            options["region"] = "virginia"
+        if provider_id in {"zhipu", "kimi"}:
+            options["model"] = f"{provider_id}-synthetic-model"
+        profile = create_profile_from_preset(provider_id, **options)
+        transport = FakeTransport()
+        adapter = create_adapter(profile=profile, credential="synthetic-only-key", transport=transport)
+        try:
+            adapter.invoke(request)
+            check(f"Provider.{provider_id}.unverified_rejected", False)
+        except ProviderAdapterConfigurationError:
+            check(f"Provider.{provider_id}.unverified_rejected", transport.calls == [])
+        verified = create_adapter(profile=replace(profile, needs_connection_verification=False),
+                                  credential="synthetic-only-key", transport=transport)
+        outcome = verified.invoke(request)
+        check(f"Provider.{provider_id}.fake_wire_contract", outcome.success
+              and outcome.value.fields == {"dcTitle": "Synthetic report"}
+              and outcome.value.provider_profile_id == profile.id
+              and outcome.value.correlation_id == "acceptance-correlation"
+              and len(transport.calls) == 1, str(outcome))
+    for provider_id in ("unknown", "openai", "claude"):
+        try:
+            create_adapter(profile=replace(profile, provider_id=provider_id),
+                           credential="synthetic-only-key", transport=FakeTransport())
+            check(f"Provider.{provider_id}.rejected", False)
+        except ProviderAdapterConfigurationError:
+            check(f"Provider.{provider_id}.rejected", True)
     try:
-        create_provider(config4)
-        check("Factory.no_api_key_should_fail", False)
-    except ValueError as e:
-        check("Factory.no_api_key_raises", "API Key" in str(e), str(e))
-
-    # Unknown provider
-    config5 = AppConfig(provider="unknown", api_key="sk-test")
-    try:
-        create_provider(config5)
-        check("Factory.unknown_should_fail", False)
-    except ValueError as e:
-        check("Factory.unknown_raises", True)
+        create_adapter(profile=profile, credential="", transport=FakeTransport())
+        check("Provider.missing_credential_rejected", False)
+    except ProviderAdapterConfigurationError:
+        check("Provider.missing_credential_rejected", True)
 
 test_providers()
 
@@ -598,52 +579,66 @@ def test_constants():
 test_constants()
 
 # ============================================================================
-section("12. ORGANIZATION ENGINE")
+section("12. FORMAL TEMPLATE ORGANIZATION")
 
 def test_organization():
-    from src.core.organization_engine import RULE_HANDLERS
+    from src.core.template_model import Template, OrgMode
+    from src.core.naming_fields import NamingFields
+    from src.core.template_renderer import TemplateRenderer, RenderStatus
 
-    rules = list(RULE_HANDLERS.keys())
-    check("Org.rules_count", len(rules) == 4, f"got: {rules}")
-    check("Org.by_date", "by_date" in rules)
-    check("Org.by_type", "by_type" in rules)
-    check("Org.by_category", "by_category" in rules)
-    check("Org.by_project", "by_project" in rules)
-
-    # Each rule is callable
-    for name, handler in RULE_HANDLERS.items():
-        check(f"Org.{name}.callable", callable(handler))
+    fields = NamingFields(dcDate="2025-07-26", dcTitle="Report", dcSubject="Sales",
+                          dcType="report", extProject="Atlas")
+    expected = {OrgMode.FLAT: "2025-07-26_Report.txt",
+                OrgMode.SUBJECT_TREE: "Sales/2025-07-26_Report.txt",
+                OrgMode.TYPE_TREE: "report/2025-07-26_Report.txt",
+                OrgMode.PROJECT_TREE: "Atlas/2025-07-26_Report.txt"}
+    for mode, name in expected.items():
+        result = TemplateRenderer.render(Template(name="Organization", org_mode=mode), fields, ".txt")
+        check(f"Organization.{mode.value}", result.status == RenderStatus.READY
+              and result.rendered_name == name, repr(result))
 
 test_organization()
 
 # ============================================================================
-section("13. FOLDER WATCHER")
+section("13. WATCH CONFIG / CONTROLLER LIFECYCLE")
 
 def test_watcher():
-    from src.core.folder_watcher import FolderWatcher
-    from src.models.watch_config import WatchConfig, WatchMode
+    from dataclasses import replace
+    from src.controllers.watch_controller import WatchController, ObserverFactory, FakeClock, FakeScheduler
+    from src.core.watch_config import WatchConfig, WatchConfigStore, WatchMode, WatchStatus
 
-    watcher = FolderWatcher()
-    check("Watcher.create", watcher is not None)
-    check("Watcher.not_running", not watcher.is_running)
-
-    # Add a watch
-    config = WatchConfig(
-        source_dir=str(PROJECT_ROOT / "test_files"),
-        mode=WatchMode.REVIEW_FIRST,
-    )
-    watcher.add_watch(config)
-    check("Watcher.add_watch", len(watcher.get_watched_folders()) == 1)
-
-    # Remove watch
-    watcher.remove_watch(config.id)
-    check("Watcher.remove_watch", len(watcher.get_watched_folders()) == 0)
-
-    # Start/stop
-    watcher.start()
-    check("Watcher.start", watcher.is_running)
-    watcher.stop()
-    check("Watcher.stop", not watcher.is_running)
+    with tempfile.TemporaryDirectory(prefix="acceptance-watch-") as directory:
+        root = Path(directory)
+        source = root / "source"
+        source.mkdir()
+        store_path = root / "watches.json"
+        store = WatchConfigStore(store_path)
+        factory = ObserverFactory(use_mock=True)
+        clock = FakeClock()
+        scheduler = FakeScheduler(clock)
+        controller = WatchController(store, observer_factory=factory, clock=clock, scheduler=scheduler)
+        config = WatchConfig(id="acceptance-watch", source_dir=str(source))
+        try:
+            controller.add_watch(config)
+            first = factory.created_observers[-1]
+            check("Watch.start", controller.is_watching(config.id) and first.running
+                  and controller.get_status(config.id) == WatchStatus.ACTIVE)
+            check("Watch.create_read_persistence", WatchConfigStore(store_path).get(config.id) == store.get(config.id))
+            controller.pause_watch(config.id)
+            check("Watch.pause", not first.running and controller.get_status(config.id) == WatchStatus.PAUSED)
+            edited = replace(controller.get_config(config.id), recursive=False, mode=WatchMode.AUTO_APPLY)
+            controller.update_watch(edited)
+            check("Watch.update_persistence", WatchConfigStore(store_path).get(config.id) == edited)
+            controller.resume_watch(config.id)
+            resumed = factory.created_observers[-1]
+            check("Watch.resume", resumed.running and controller.get_status(config.id) == WatchStatus.ACTIVE)
+            controller.stop_all()
+            check("Watch.stop", not resumed.running and scheduler.workers_idle)
+            controller.remove_watch(config.id)
+            check("Watch.delete_persistence", not controller.is_watching(config.id)
+                  and WatchConfigStore(store_path).list_all() == [] and source.is_dir())
+        finally:
+            controller.stop_all()
 
 test_watcher()
 
@@ -701,83 +696,51 @@ def test_gui():
 test_gui()
 
 # ============================================================================
-section("15. END-TO-END PIPELINE (simulated)")
+section("15. SYNTHETIC FORMAL PIPELINE — Not Model Quality")
 
 def test_e2e():
+    """Synthetic fields validate plumbing, not real AI semantics."""
     from src.core.file_scanner import FileScanner
     from src.core.content_extractor import extract
-    from src.core.template_engine import TemplateEngine
-    from src.models.file_item import FileItem, FileStatus
-    from src.models.template import NamingTemplate
+    from src.core.naming_fields import NamingFields
+    from src.core.template_model import Template
+    from src.core.template_renderer import TemplateRenderer, RenderStatus
+    from src.models.file_item import FileStatus
     from src.core.rename_history import RenameHistory
-    from src.models.rename_record import RenameRecord
-    from src.utils.file_utils import sanitize_filename
+    from src.core.rename_executor import RenameExecutor
+    from src.core.rename_plan import RenamePlan, SourceFingerprint
+    from src.core.preflight_service import PreflightService
+    from src.core.undo_manager import UndoManager
 
-    print("  Simulating full pipeline...")
-
-    # Step 1: Scan
-    scanner = FileScanner()
-    items = scanner.scan_directory(PROJECT_ROOT / "test_files")
-    assert len(items) >= 2, f"Expected >=2 files, got {len(items)}"
-    print(f"  Step 1 Scan: {len(items)} files found")
-
-    # Step 2: Extract
-    for item in items:
-        extract(item, max_chars=4000)
-        assert item.status == FileStatus.EXTRACTED, f"Extract failed for {item.original_name}: {item.error_message}"
-    print(f"  Step 2 Extract: all {len(items)} files extracted")
-
-    # Step 3: Template render (simulated AI response)
-    engine = TemplateEngine()
-    template = NamingTemplate(pattern="{date}_{title}.{ext}", separator="_")
-    suggestions = []
-    for item in items:
-        # Simulate AI response based on content
-        if "销售" in item.extracted_text:
-            ai_fields = {"date": "2025-Q1", "title": "季度销售报告", "tags": ["销售", "季度"]}
-        elif "AI" in item.extracted_text or "重命名" in item.extracted_text:
-            ai_fields = {"date": "2025-07-26", "title": "AI重命名工具项目需求", "tags": ["AI", "项目"]}
-        else:
-            ai_fields = {"date": "unknown", "title": item.original_name[:20], "tags": []}
-
-        suggested = engine.render(template, ai_fields, item)
-        item.suggested_name = suggested
-        item.final_name = suggested
-        item.ai_fields = ai_fields
-        item.status = FileStatus.SUGGESTED
-        suggestions.append(suggested)
-        print(f"  Step 3 Suggest: {item.original_name} → {suggested}")
-
-    # Step 4: Validate names
-    for name in suggestions:
-        sanitized = sanitize_filename(name)
-        check(f"E2E.valid_name.{sanitized[:30]}", len(sanitized) > 0 and len(sanitized) <= 200,
-              f"len={len(sanitized)}")
-
-    # Step 5: History recording (dry run)
-    history_file = PROJECT_ROOT / "rename_history" / "_e2e_test.jsonl"
-    if history_file.exists():
-        history_file.unlink()
-
-    history = RenameHistory(history_file)
-    batch_id = "e2e-test-batch"
-    for item in items:
-        history.record(RenameRecord(
-            batch_id=batch_id,
-            old_path=item.original_path,
-            new_path=item.original_path.parent / item.suggested_name,
-            file_size=item.file_size,
-        ))
-
-    records = history.get_all()
-    check("E2E.history_saved", len(records) == len(items),
-          f"expected {len(items)}, got {len(records)}")
-
-    # Clean up
-    if history_file.exists():
-        history_file.unlink()
-
-    print(f"  [PASS] E2E.complete — Full pipeline: scan → extract → suggest → validate → log")
+    with tempfile.TemporaryDirectory(prefix="acceptance-e2e-") as directory:
+        root = Path(directory)
+        source = root / "synthetic.txt"
+        payload = b"Synthetic quarterly revenue report. No private inputs."
+        source.write_bytes(payload)
+        items = FileScanner().scan_files([str(source)])
+        check("E2E.scan", len(items) == 1 and items[0].original_path == source)
+        item = items[0]
+        extract(item)
+        check("E2E.extract", item.status == FileStatus.EXTRACTED and item.extracted_text.strip() == payload.decode())
+        fields = NamingFields(dcDate="2025-07-26", dcTitle="Synthetic report")
+        rendered = TemplateRenderer.render(Template(name="Synthetic"), fields, item.original_ext)
+        check("E2E.formal_render", rendered.status == RenderStatus.READY
+              and rendered.rendered_name == "2025-07-26_Synthetic_report.txt")
+        history_path = root / "history.jsonl"
+        history = RenameHistory(history_path)
+        executor = RenameExecutor(PreflightService([str(root)]), history)
+        stamp = source.stat()
+        plan = RenamePlan(item.id, str(source), SourceFingerprint(stamp.st_size, stamp.st_mtime_ns),
+                          rendered.rendered_name, str(root), item.original_ext)
+        applied = executor.execute([plan], "synthetic-e2e-batch")[0]
+        check("E2E.apply", applied.success and Path(applied.new_path).read_bytes() == payload, str(applied))
+        record = history.get_all()[0]
+        check("E2E.history_links", record.task_id == item.id and record.batch_id == "synthetic-e2e-batch"
+              and record.old_path == source and str(record.new_path) == applied.new_path)
+        restored = UndoManager(str(history_path), executor=executor).undo_last_batch()[0]
+        check("E2E.undo_content_links", restored.success and restored.task_id == item.id
+              and restored.batch_id == "synthetic-e2e-batch" and source.read_bytes() == payload
+              and history.get_all()[0].undone, str(restored))
 
 test_e2e()
 
@@ -785,55 +748,20 @@ test_e2e()
 section("16. MIDDLEWARE LAYER — Integration Wiring")
 
 def test_integration():
-    """Verify that the middleware layer properly connects all components."""
-    from src.core.file_scanner import FileScanner
-    from src.core.content_extractor import extract
-    from src.core.ai_engine import AIEngine
-    from src.core.rename_engine import RenameEngine
+    """Public current surface shares the same formal renderer and persistence."""
+    from src.models import FileItem, RenameRecord, AppConfig
+    from src.core.template_model import Template
+    from src.core.naming_fields import NamingFields
+    from src.core.template_renderer import TemplateRenderer, RenderStatus
+    from src.providers.factory import is_legacy_provider
     from src.core.rename_history import RenameHistory
-    from src.core.template_engine import TemplateEngine
-    from src.core.folder_watcher import FolderWatcher
-    from src.models.file_item import FileItem, FileStatus
-    from src.models.app_config import AppConfig
-    from src.models.template import NamingTemplate
 
-    # Verify scanner → extractor handoff
-    scanner = FileScanner()
-    items = scanner.scan_directory(PROJECT_ROOT / "test_files")
-    for item in items:
-        extract(item)
-        check(f"Integration.extract.{item.original_name}", item.status == FileStatus.EXTRACTED)
-
-    # Verify extractor → AI engine handoff (with config, no real API call)
-    config = AppConfig(api_key="sk-test")
-    ai = AIEngine(config)
-    for item in items:
-        if item.status == FileStatus.EXTRACTED:
-            # Don't actually call AI, just verify the engine is configured
-            check(f"Integration.ai_engine.{item.original_name}", ai is not None)
-            break
-
-    # Verify rename engine → history handoff
-    engine = RenameEngine()
-    check("Integration.rename_engine", engine is not None)
-    check("Integration.rename_engine.history", engine.history is not None)
-    summary = engine.get_history_summary()
-    check("Integration.history_summary_type", isinstance(summary, list))
-
-    # Verify template engine → file item integration
-    tmpl_engine = TemplateEngine()
-    template = NamingTemplate(pattern="{date}_{title}.{ext}")
-    result = tmpl_engine.render(template, {"date": "2025-01-01", "title": "Test"}, items[0])
-    check("Integration.template_render", len(result) > 5)
-
-    # Verify folder watcher → config integration
-    watcher = FolderWatcher()
-    from src.models.watch_config import WatchConfig
-    wc = WatchConfig(source_dir=str(PROJECT_ROOT / "test_files"))
-    watcher.add_watch(wc)
-    check("Integration.watcher_add", len(watcher.get_watched_folders()) == 1)
-    watcher.remove_watch(wc.id)
-    watcher.stop()
+    result = TemplateRenderer.render(Template(name="Integration"),
+                                     NamingFields(dcDate="2025-01-01", dcTitle="Test"), ".txt")
+    check("Integration.formal_render_exact", result.status == RenderStatus.READY
+          and result.rendered_name == "2025-01-01_Test.txt")
+    check("Integration.history_persistence_only", not hasattr(RenameHistory, "undo_batch"))
+    check("Integration.legacy_gate_preserved", is_legacy_provider(" CLAUDE "))
 
 test_integration()
 

@@ -138,12 +138,15 @@ class PreparationCoverage:
     video_timestamps_seconds: tuple[float, ...] = ()
 
     def __post_init__(self):
-        valid = (self.content_kind in {"text", "document", "pdf", "scanned_pdf", "image", "video"}
+        valid = (type(self.content_kind) is str
+                 and self.content_kind in {"text", "document", "pdf", "scanned_pdf", "image", "video"}
+                 and type(self.text_source) is str
                  and self.text_source in {"extracted_text", "none", "metadata_only"}
                  and _integer(self.sections_processed, 100_000, minimum=0)
                  and (self.sections_total is None or _integer(self.sections_total, 2**31-1, minimum=0))
                  and (self.sections_total is None or self.sections_processed <= self.sections_total)
                  and type(self.text_truncated) is bool
+                 and type(self.text_limit_reason) is str
                  and self.text_limit_reason in {"complete", "character_limit", "utf8_limit", "section_limit"}
                  and self.text_truncated == (self.text_limit_reason != "complete"))
         if not valid:
@@ -187,7 +190,9 @@ def _make_visual(descriptor, data):
     expected = {"resized_image": ("image-v1", "local-image"),
                 "rendered_scan_page": ("pdf-v1+image-v1", "local-pdf-page"),
                 "video_keyframe": ("video-v1+image-v1", "local-video-frame")}
-    if (descriptor["kind"] not in expected
+    if (type(data) is not bytes
+            or any(type(descriptor[key]) is not str for key in ("kind", "mime_type", "preprocessing_version", "provenance", "content_digest"))
+            or descriptor["kind"] not in expected
             or (descriptor["preprocessing_version"], descriptor["provenance"]) != expected[descriptor["kind"]]
             or not _integer(descriptor["width"], 2048) or not _integer(descriptor["height"], 2048)
             or descriptor["width"] * descriptor["height"] > 4_000_000
@@ -221,8 +226,11 @@ class LocalPreparationResult:
                 or type(self.warning_codes) is not tuple or len(self.warning_codes) > len(WARNING_CODES)
                 or any(type(c) is not str or c not in WARNING_CODES for c in self.warning_codes)
                 or len(set(self.warning_codes)) != len(self.warning_codes)
+                or type(self.effective_quality) is not str
                 or self.effective_quality not in QUALITY_COUNTS):
             raise PreparationError("invalid_result")
+        # Frozen objects may still have been altered with object.__setattr__.
+        PreparationCoverage.__post_init__(self.coverage)
         for visual in self.visuals:
             _make_visual(_visual_descriptor(visual), visual.data)
         if sum(v.byte_size for v in self.visuals) > MAX_VISUAL_BYTES:
@@ -307,12 +315,45 @@ def decode_request(encoded: str) -> PreparationRequest:
         raise PreparationError("invalid_request") from None
 
 
+def _result_header(result, text_bytes):
+    return _json({"version": 1, "text_bytes": text_bytes, "visuals": [_visual_descriptor(v) for v in result.visuals],
+                  "coverage": asdict(result.coverage), "warning_codes": result.warning_codes, "effective_quality": result.effective_quality})
+
+
+def validate_result(result: LocalPreparationResult, *, limits: LocalPreparationLimits | None = None,
+                    quality_mode: str | None = None) -> LocalPreparationResult:
+    """Recheck object evidence and wire-equivalent budgets without a media frame."""
+    try:
+        if type(result) is not LocalPreparationResult:
+            raise ValueError
+        LocalPreparationResult.__post_init__(result)
+        text_bytes = len(result.text.encode("utf-8"))
+        header = _result_header(result, text_bytes)
+        visual_bytes = sum(v.byte_size for v in result.visuals)
+        if len(header) > MAX_HEADER_BYTES or 12 + len(header) + text_bytes + visual_bytes > MAX_FRAME_BYTES:
+            raise ValueError
+        if quality_mode is not None and result.effective_quality != quality_mode:
+            raise ValueError
+        if limits is not None:
+            coverage = result.coverage
+            if (len(result.text) > limits.max_text_chars or text_bytes > limits.max_text_utf8_bytes
+                    or len(result.visuals) > limits.max_visuals or visual_bytes > limits.max_total_visual_bytes
+                    or any(v.byte_size > limits.max_image_bytes or max(v.width, v.height) > limits.max_image_long_edge or v.width*v.height > limits.max_image_pixels for v in result.visuals)
+                    or len(coverage.text_page_indices) > limits.max_pdf_pages
+                    or len(coverage.rendered_page_indices) > limits.max_pdf_pages
+                    or len(coverage.video_timestamps_seconds) > limits.max_video_frames
+                    or (coverage.video_duration_seconds is not None and coverage.video_duration_seconds > limits.max_video_duration_seconds)):
+                raise ValueError
+        return result
+    except (ValueError, TypeError, KeyError, AttributeError, UnicodeError, RecursionError, PreparationError, OverflowError):
+        raise PreparationError("invalid_result") from None
+
+
 def encode_result(result: LocalPreparationResult) -> bytes:
     if type(result) is not LocalPreparationResult:
         raise PreparationError("invalid_result")
     text = result.text.encode("utf-8")
-    header = _json({"version": 1, "text_bytes": len(text), "visuals": [_visual_descriptor(v) for v in result.visuals],
-                    "coverage": asdict(result.coverage), "warning_codes": result.warning_codes, "effective_quality": result.effective_quality})
+    header = _result_header(result, len(text))
     if len(header) > MAX_HEADER_BYTES:
         raise PreparationError("invalid_result")
     return MAGIC + struct.pack(">I", len(header)) + header + text + b"".join(v.data for v in result.visuals)
@@ -355,17 +396,6 @@ def decode_result(frame: bytes, *, limits: LocalPreparationLimits | None = None,
         if type(header["warning_codes"]) is not list:
             raise ValueError
         result = LocalPreparationResult(text, tuple(visuals), PreparationCoverage(**coverage), tuple(header["warning_codes"]), header["effective_quality"])
-        if quality_mode is not None and result.effective_quality != quality_mode:
-            raise ValueError
-        if limits is not None:
-            if (len(text) > limits.max_text_chars or len(text.encode("utf-8")) > limits.max_text_utf8_bytes
-                    or len(visuals) > limits.max_visuals or sum(sizes) > limits.max_total_visual_bytes
-                    or any(v.byte_size > limits.max_image_bytes or max(v.width, v.height) > limits.max_image_long_edge or v.width*v.height > limits.max_image_pixels for v in visuals)
-                    or len(result.coverage.text_page_indices) > limits.max_pdf_pages
-                    or len(result.coverage.rendered_page_indices) > limits.max_pdf_pages
-                    or len(result.coverage.video_timestamps_seconds) > limits.max_video_frames
-                    or (result.coverage.video_duration_seconds is not None and result.coverage.video_duration_seconds > limits.max_video_duration_seconds)):
-                raise ValueError
-        return result
+        return validate_result(result, limits=limits, quality_mode=quality_mode)
     except (ValueError, TypeError, KeyError, UnicodeError, RecursionError, PreparationError, OverflowError):
         raise PreparationError("invalid_result") from None

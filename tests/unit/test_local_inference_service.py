@@ -303,6 +303,57 @@ def limit():
     return time.monotonic() + 30
 
 
+@pytest.mark.parametrize("error,phase", [
+    ("RECOVERY_REQUIRED", "RECOVERY_REQUIRED"),
+    ("CLEANUP_PENDING", "CLEANUP_PENDING"),
+    (None, "CLEANUP_PENDING"),
+    ("UNEXPECTED", "CLEANUP_PENDING"),
+])
+def test_cleanup_phase(error, phase):
+    from src.services.local_ai import inference_service as service_module
+    assert service_module._cleanup_phase(error) == phase
+
+
+@pytest.mark.parametrize("kind,expected", [
+    ("failure", "UNSUPPORTED_RUNTIME"),
+    ("request", "INVALID_RESPONSE"),
+    ("capacity", "INSUFFICIENT_MEMORY"),
+    ("recovery", "RECOVERY_REQUIRED"),
+    ("journal", "RECOVERY_REQUIRED"),
+    ("cancel", "CANCELLED"),
+    ("busy", "BUSY"),
+    ("unknown", "LOCAL_INFERENCE_FAILED"),
+])
+def test_invocation_error_classification_before_owner_acquisition(kind, expected):
+    from src.services.local_ai.inference_service import HostCapacityError, _Failure
+    from src.services.local_ai.inference_request import LocalRequestError
+    from src.services.local_ai.inference_journal import InferenceJournalError, InferenceRecoveryRequired
+    from src.services.local_ai.resource_store import StoreBusy
+    from src.services.local_ai.resource_transport import ResourceCancelled
+    errors = {
+        "failure": _Failure("UNSUPPORTED_RUNTIME"),
+        "request": LocalRequestError("INVALID_RESPONSE"),
+        "capacity": HostCapacityError("INSUFFICIENT_MEMORY"),
+        "recovery": InferenceRecoveryRequired(),
+        "journal": InferenceJournalError("JOURNAL_WRITE_FAILED"),
+        "cancel": ResourceCancelled("secret cancellation"),
+        "busy": StoreBusy("secret store failure"),
+        "unknown": RuntimeError("secret unknown failure"),
+    }
+    rig = Rig()
+
+    def fail_discovery():
+        raise errors[kind]
+
+    rig.discover = fail_discovery
+    svc = service(rig)
+    snap = svc.check_ready(deadline=limit())
+    assert snap.error == expected
+    assert snap.phase == ("RECOVERY_REQUIRED" if kind in ("recovery", "journal") else "NOT_READY")
+    assert svc._owner is None and rig.log == ["journal.lease"]
+    assert "secret" not in repr(snap)
+
+
 def test_constructor_and_unready_infer_have_no_native_side_effects():
     rig = Rig()
     svc = service(rig)

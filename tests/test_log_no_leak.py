@@ -99,11 +99,42 @@ def test_no_api_key_slicing_in_log_calls():
     )
 
 
-def test_deepseek_source_has_no_key_logging():
-    """deepseek.py: no line logs api_key prefix/suffix fragments."""
-    source = (SRC_DIR / "providers" / "deepseek.py").read_text(encoding="utf-8")
-    assert "api_key[:8]" not in source, "api_key prefix slice still present in deepseek.py"
-    assert "api_key[-4:]" not in source, "api_key suffix slice still present in deepseek.py"
+def test_current_provider_source_has_no_credential_logging():
+    """Static output-context gate, not proof of runtime error redaction.
+
+    The current adapter has no logger. Existing dynamic transport/contracts
+    remain responsible for error-result redaction. Authorization construction
+    is intentional transport behavior and is not a logging leak.
+    """
+    secrets = {"api_key", "credential", "_credential"}
+
+    def violations(source):
+        found = []
+        for node in ast.walk(ast.parse(source)):
+            if not isinstance(node, ast.Call):
+                continue
+            output = (_is_log_call(node)
+                      or isinstance(node.func, ast.Name) and node.func.id == "print"
+                      or ast.unparse(node.func) in {"sys.stdout.write", "sys.stderr.write"})
+            if not output:
+                continue
+            values = [*node.args, *(item.value for item in node.keywords)]
+            if any((isinstance(child, ast.Name) and child.id in secrets)
+                   or (isinstance(child, ast.Attribute) and child.attr in secrets)
+                   for value in values for child in ast.walk(value)):
+                found.append(node.lineno)
+        return found
+
+    # Prove the scanner catches whole credentials and prefix/suffix variants
+    # in logging/output contexts without rejecting legitimate wire headers.
+    for secret in secrets:
+        assert violations(f"logger.debug({secret}[:8])")
+        assert violations(f"log.warning(self.{secret}[-4:])")
+        assert violations(f"print({secret})")
+        assert violations(f"sys.stderr.write(self.{secret}[:8])")
+    assert not violations('headers = {"Authorization": f"Bearer {self._credential}"}')
+    source = (SRC_DIR / "providers" / "openai_compatible.py").read_text(encoding="utf-8")
+    assert not violations(source), "Credential logging/output in current Provider source"
 
 
 def test_current_settings_sources_have_no_key_logging():

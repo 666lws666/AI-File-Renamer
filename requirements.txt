@@ -2,9 +2,6 @@
 # QObject.thread() must not transfer main-thread wrapper ownership to its caller.
 PySide6==6.12.0
 
-# AI Providers (DeepSeek uses OpenAI-compatible API)
-openai>=1.60.0
-anthropic>=0.40.0
 
 # File Content Extraction
 PyPDF2>=3.0.0
@@ -22,7 +19,6 @@ watchdog>=6.0.0
 keyring>=25.0.0
 
 # Utilities
-httpx>=0.28.0
 pydantic>=2.10.0
 loguru>=0.7.0
 opencc-python-reimplemented==0.1.7

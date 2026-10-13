@@ -43,6 +43,10 @@ class _Failure(Exception):
         super().__init__(code)
 
 
+def _cleanup_phase(error) -> str:
+    return "RECOVERY_REQUIRED" if error == "RECOVERY_REQUIRED" else "CLEANUP_PENDING"
+
+
 @dataclass(frozen=True, slots=True)
 class LocalInferenceConfig:
     resource_root: Path = field(repr=False)
@@ -436,11 +440,7 @@ class LocalInferenceService:
         except BaseException as exc:
             if not isinstance(exc, Exception):
                 interrupted = exc
-            elif isinstance(exc, _Failure):
-                error = exc.code
-            elif isinstance(exc, LocalRequestError):
-                error = exc.code
-            elif isinstance(exc, HostCapacityError):
+            elif isinstance(exc, (_Failure, LocalRequestError, HostCapacityError)):
                 error = exc.code
             elif isinstance(exc, ResourceCancelled):
                 error = cancellation.failure or "CANCELLED"
@@ -458,9 +458,7 @@ class LocalInferenceService:
                         "RESOURCE_MISSING", "RESOURCE_VERIFICATION_FAILED",
                         "INVALID_INFERENCE_RESOURCES", "INVALID_RUNTIME_INVENTORY"
                     ) else "RESOURCE_FAILED"
-            elif isinstance(exc, InferenceRecoveryRequired):
-                error = "RECOVERY_REQUIRED"
-            elif isinstance(exc, InferenceJournalError):
+            elif isinstance(exc, (InferenceRecoveryRequired, InferenceJournalError)):
                 error = "RECOVERY_REQUIRED"
             elif isinstance(exc, StageError):
                 error = (cancellation.failure or "CANCELLED") if exc.stage == "cancelled" else "STAGE_FAILED"
@@ -479,7 +477,7 @@ class LocalInferenceService:
                 raise
             if not cleanup.complete:
                 self._owner = owner
-                phase = "RECOVERY_REQUIRED" if cleanup.error == "RECOVERY_REQUIRED" else "CLEANUP_PENDING"
+                phase = _cleanup_phase(cleanup.error)
                 self._publish(phase, cleanup.error)
                 if interrupted is not None:
                     raise interrupted
@@ -580,7 +578,7 @@ class LocalInferenceService:
             if result.complete:
                 self._owner = None
                 return self._publish("NOT_READY")
-            phase = "RECOVERY_REQUIRED" if result.error == "RECOVERY_REQUIRED" else "CLEANUP_PENDING"
+            phase = _cleanup_phase(result.error)
             return self._publish(phase, result.error)
         finally:
             self._operation.release()
@@ -601,7 +599,7 @@ class LocalInferenceService:
             if self._owner is not None:
                 result = self._owner.cleanup(deadline=limit)
                 if not result.complete:
-                    phase = "RECOVERY_REQUIRED" if result.error == "RECOVERY_REQUIRED" else "CLEANUP_PENDING"
+                    phase = _cleanup_phase(result.error)
                     return self._publish(phase, result.error)
                 self._owner = None
             if self._journal_context is not None:

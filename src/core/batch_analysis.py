@@ -41,7 +41,7 @@ from src.core.processing_analysis import (
 from src.services.local_ai.inference_request import LocalNamingRequest, LocalInferenceResult
 from src.services.local_ai.preparation_protocol import (
     LocalPreparationLimits, LocalPreparationResult, QUALITY_COUNTS,
-    decode_result, encode_result,
+    validate_result,
 )
 from src.providers.openai_compatible import ProcessingDispatch
 from src.services.retry_policy import RetryExecutor, RetryPolicy
@@ -457,8 +457,8 @@ class BatchAnalysisService:
             raise BatchAnalysisError("Local analysis failed")
         # Revalidate protocol fakes and the concrete service alike against the
         # captured resource limits; never silently slice excessive visuals/text.
-        result = decode_result(encode_result(result), limits=work.preparation_limits,
-                               quality_mode=work.settings.quality_mode)
+        result = validate_result(result, limits=work.preparation_limits,
+                                 quality_mode=work.settings.quality_mode)
         text = result.text
         if source.suffix.lower() in {".xlsx", ".xls"}:
             text = "\n".join(line for line in text.splitlines()

@@ -76,6 +76,7 @@ def test_default_watch_with_batch_none_still_owns_exact_lane(make_runtime):
 def test_owned_publication_review_or_auto_then_public_undo(make_runtime, tmp_path, monkeypatch, mode):
     from src.core.batch_analysis import BatchAnalysisService
     from src.controllers.watch_controller import WatchController
+    from src.controllers.managed_file_operation_lane import FileOperationProgress
     monkeypatch.setattr(WatchController, "DEFAULT_DEBOUNCE_SECONDS", .01)
     monkeypatch.setattr(ObserverFactory, "create", lambda _: MockObserver())
     calls = []
@@ -87,18 +88,37 @@ def test_owned_publication_review_or_auto_then_public_undo(make_runtime, tmp_pat
     store.add(WatchConfig("watch", str(source), mode=mode))
     runtime = make_runtime(live_config=cloud_config())
     owner = runtime.watch_owner
+    lane = runtime.file_operation_lane
+    progress_posted, release = threading.Event(), threading.Event()
+    post = lane._post
+    def post_then_hold_apply_tail(payload, job, signal):
+        post(payload, job, signal)
+        if type(payload) is FileOperationProgress and payload.reservation.request.kind == "apply":
+            progress_posted.set()
+            assert release.wait(5)
+    monkeypatch.setattr(lane, "_post", post_then_hold_apply_tail)
     path = source / "original.txt"; path.write_bytes(b"synthetic test content")
-    owner.controller._simulate_file_event("watch", str(path), FileEvent.CREATED)
-    pump_until(lambda: bool(owner.results.items()), timeout=3)
-    if mode is WatchMode.REVIEW_FIRST:
-        row, = owner.results.items()
-        assert row.state is ReviewItemState.AWAITING_APPROVAL
-        assert runtime.watch_controller.approveResult(row.id) is True
-    pump_until(lambda: owner.results.items()[0].state is ReviewItemState.APPLIED, timeout=3)
-    applied, = owner.results.items()
-    assert calls and all(ident != threading.get_ident() for _, ident in calls)
-    runtime.watch_controller.refresh()
-    assert len(calls) == 1
+    try:
+        owner.controller._simulate_file_event("watch", str(path), FileEvent.CREATED)
+        pump_until(lambda: bool(owner.results.items()), timeout=3)
+        if mode is WatchMode.REVIEW_FIRST:
+            row, = owner.results.items()
+            assert row.state is ReviewItemState.AWAITING_APPROVAL
+            assert runtime.watch_controller.approveResult(row.id) is True
+        pump_until(lambda: owner.results.items()[0].state is ReviewItemState.APPLIED
+                   and progress_posted.is_set(), timeout=3)
+        applied, = owner.results.items()
+        assert calls and all(ident != threading.get_ident() for _, ident in calls)
+        runtime.watch_controller.refresh()
+        assert len(calls) == 1
+        # Progress publishes APPLIED before terminal completion retires its owner.
+        assert applied.id in owner.file_actions._rows
+        assert lane.pending_job_count == lane.owned_item_count == 1
+        assert not lane.workers_idle and not owner.file_actions.workers_idle
+        assert runtime.watch_controller.undoResult(applied.id) is False
+    finally:
+        release.set()
+    pump_until(lambda: owner.file_actions.workers_idle and lane.workers_idle, timeout=3)
     assert runtime.watch_controller.undoResult(applied.id) is True
     pump_until(lambda: owner.results.item(applied.id).state is ReviewItemState.UNDONE, timeout=3)
     assert path.read_bytes() == b"synthetic test content"

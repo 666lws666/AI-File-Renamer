@@ -152,52 +152,6 @@ class RenameHistory:
             return None
         return records[-1].batch_id
 
-    def undo_batch(self, batch_id: str) -> int:
-        """Reverse all renames in a batch (LIFO order).
-
-        Args:
-            batch_id: The batch to undo.
-
-        Returns:
-            Number of renames successfully undone.
-        """
-        records = self.get_by_batch(batch_id)
-        active_records = [r for r in records if not r.undone]
-
-        if not active_records:
-            logger.info(f"批次 {batch_id} 没有可撤销的记录")
-            return 0
-
-        logger.info(f"撤销批次 {batch_id}: {len(active_records)} 个文件")
-        count = 0
-
-        # Reverse: undo in LIFO order
-        for record in reversed(active_records):
-            try:
-                new_exists = record.new_path.exists()
-                old_exists = record.old_path.exists()
-
-                if not new_exists:
-                    logger.warning(f"文件不存在，无法撤销: {record.new_path}")
-                    continue
-
-                if old_exists and old_exists != record.new_path:
-                    logger.warning(f"目标路径已存在，跳过: {record.old_path}")
-                    continue
-
-                os.rename(str(record.new_path), str(record.old_path))
-                record.undone = True
-                count += 1
-                logger.debug(f"已撤销: {record.new_path.name} → {record.old_path.name}")
-
-            except Exception as e:
-                logger.error(f"撤销失败: {record.new_path} — {e}")
-
-        # Rewrite file with updated undone flags
-        self._rewrite_with_undone(batch_id)
-        logger.info(f"撤销完成: {count}/{len(active_records)} 个文件")
-        return count
-
     def mark_records_undone(self, batch_id: str, record_ids: list[str]) -> None:
         """Mark specific records as undone without file I/O. Only marks, doesn't move files."""
         id_set = set(record_ids)
@@ -207,13 +161,3 @@ class RenameHistory:
                 if record.batch_id == batch_id and record.id in id_set:
                     raw['undone'] = True
             self._write_strict_unlocked(rows)
-
-    def _rewrite_with_undone(self, batch_id: str) -> None:
-        """Rewrite history file, marking all records in a batch as undone."""
-        with self._lock:
-            all_records = self._get_all_unlocked()
-            with open(self._file, "w", encoding="utf-8") as f:
-                for r in all_records:
-                    if r.batch_id == batch_id:
-                        r.undone = True
-                    f.write(r.to_json_line() + "\n")

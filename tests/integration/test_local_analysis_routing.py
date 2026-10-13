@@ -132,7 +132,20 @@ def test_invalid_language_overrides_remain_rejected_at_admission(tmp_path, langu
     assert not env.preparation.calls and not env.inference.calls and not env.cloud_calls
 
 
-def test_local_runs_without_any_cloud_boundary_and_preserves_authentic_context(tmp_path):
+def test_local_runs_without_any_cloud_boundary_and_preserves_authentic_context(tmp_path, monkeypatch):
+    import src.core.batch_analysis as analysis
+    from src.services.local_ai import preparation_protocol as protocol
+    calls = []
+    validate = protocol.validate_result
+    def observe(result, **kwargs):
+        calls.append((result, kwargs))
+        return validate(result, **kwargs)
+    def no_roundtrip(*args, **kwargs):
+        pytest.fail("second preparation IPC roundtrip")
+    monkeypatch.setattr(analysis, "validate_result", observe, raising=False)
+    for module in (analysis, protocol):
+        for name in ("encode_result", "decode_result"):
+            monkeypatch.setattr(module, name, no_roundtrip, raising=False)
     env = setup_service(tmp_path)
     work = capture(env)
     outcome = env.service.run_prepared(work)
@@ -148,6 +161,8 @@ def test_local_runs_without_any_cloud_boundary_and_preserves_authentic_context(t
     assert infer_kw["deadline"] == prep_kw["deadline"] == work.deadline
     assert 500 < work.deadline - time.monotonic() <= 600
     assert infer_kw["is_current"]() and not infer_kw["cancelled"]()
+    assert len(calls) == 1
+    assert calls[0][1] == {"limits": work.preparation_limits, "quality_mode": work.settings.quality_mode}
 
 
 def test_not_ready_rejects_before_settings_or_profile(tmp_path):
@@ -627,8 +642,15 @@ def test_template_snapshot_does_not_retain_mutable_typed_lookalikes(tmp_path):
         capture(env)
 
 
-@pytest.mark.parametrize("case", ["text-limit", "visual-limit", "quality-mismatch"])
-def test_preparation_is_validated_against_captured_limits_before_inference(tmp_path, case):
+@pytest.mark.parametrize("case", ["text-limit", "visual-limit", "quality-mismatch", "tampered-coverage", "tampered-visual"])
+def test_preparation_is_validated_against_captured_limits_before_inference(tmp_path, case, monkeypatch):
+    import src.core.batch_analysis as analysis
+    from src.services.local_ai import preparation_protocol as protocol
+    def no_roundtrip(*args, **kwargs):
+        pytest.fail("second preparation IPC roundtrip")
+    for module in (analysis, protocol):
+        for name in ("encode_result", "decode_result"):
+            monkeypatch.setattr(module, name, no_roundtrip, raising=False)
     env = setup_service(tmp_path)
     if case == "text-limit":
         env.config.max_content_chars = 3
@@ -640,9 +662,17 @@ def test_preparation_is_validated_against_captured_limits_before_inference(tmp_p
         env.preparation.result = LocalPreparationResult("", tuple(visual("rendered_scan_page", i) for i in range(2)),
             PreparationCoverage("scanned_pdf", text_source="none", pdf_total_pages=2,
                 sections_total=2, rendered_page_indices=(0, 1)), (), "balanced")
-    else:
+    elif case == "quality-mismatch":
         env.preparation.prepare = lambda *a, **kw: replace(env.preparation.result, effective_quality="economy")
-    with pytest.raises(BatchAnalysisError):
+    else:
+        prepared = env.preparation.result
+        if case == "tampered-coverage":
+            object.__setattr__(prepared.coverage, "sections_processed", True)
+        else:
+            prepared = LocalPreparationResult("", (visual(),), PreparationCoverage("image", text_source="none"), (), "balanced")
+            object.__setattr__(prepared.visuals[0], "content_digest", "0" * 64)
+        env.preparation.prepare = lambda *a, **kw: prepared
+    with pytest.raises(BatchAnalysisError, match="^Local analysis failed$"):
         env.service.run_prepared(capture(env))
     assert not env.inference.calls
 
