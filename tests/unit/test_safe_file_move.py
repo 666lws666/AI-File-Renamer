@@ -13,6 +13,7 @@ import struct
 import tempfile
 import time
 import sys
+from types import SimpleNamespace
 
 import pytest
 
@@ -26,6 +27,17 @@ def _publish_ready_json(ready_text, graph):
     publishing = ready.with_name(ready.name + '.publishing')
     publishing.write_text(json.dumps(graph), encoding='utf-8')
     publishing.replace(ready)
+
+
+def _wait_ready_json(ready, child, deadline):
+    """A published marker must also be readable within the original wait budget."""
+    while True:
+        try:
+            return json.loads(ready.read_text(encoding='utf-8'))
+        except (FileNotFoundError, PermissionError):
+            if child.poll() is not None or time.monotonic() >= deadline:
+                raise
+            time.sleep(0.02)
 
 
 def test_ready_json_is_invisible_until_complete_closed_publication(tmp_path, monkeypatch):
@@ -74,6 +86,85 @@ def test_ready_json_replace_failure_preserves_final_and_complete_sibling(tmp_pat
     assert attempts == [(publishing, ready, graph)]
     assert ready.read_bytes() == original if prior else not ready.exists()
     assert json.loads(publishing.read_text(encoding='utf-8')) == graph
+
+
+def test_ready_reader_waits_for_real_sharing_lock_release(tmp_path, monkeypatch):
+    ready = tmp_path / 'ready.json'
+    graph = {'case': 'readable-ready', 'residue': ['owned-synthetic']}
+    _publish_ready_json(ready, graph)
+    holder = [move._open(str(ready))]  # Real exclusive Windows handle, not a mocked read.
+    waits = []
+    try:
+        assert ready.exists()
+        with pytest.raises(PermissionError):
+            ready.read_text(encoding='utf-8')
+        def release(seconds):
+            waits.append(seconds)
+            move._close(holder.pop())
+        monkeypatch.setattr(time, 'sleep', release)
+        assert _wait_ready_json(ready, SimpleNamespace(poll=lambda: None),
+                                time.monotonic() + 1) == graph
+        assert waits == [0.02] and not holder
+        assert json.loads(ready.read_text(encoding='utf-8')) == graph
+    finally:
+        if holder:
+            move._close(holder.pop())
+
+
+@pytest.mark.parametrize('boundary', ['deadline', 'child-exit'])
+def test_ready_reader_never_accepts_locked_signal_at_boundary(tmp_path, monkeypatch, boundary):
+    ready = tmp_path / 'ready.json'
+    _publish_ready_json(ready, {'case': 'still-locked'})
+    handle = move._open(str(ready))
+    try:
+        monkeypatch.setattr(time, 'monotonic', lambda: 10.0)
+        monkeypatch.setattr(time, 'sleep', lambda _: pytest.fail('Must not extend the wait boundary'))
+        child = SimpleNamespace(poll=lambda: None if boundary == 'deadline' else 0)
+        with pytest.raises(PermissionError):
+            _wait_ready_json(ready, child, 10.0 if boundary == 'deadline' else 20.0)
+        assert ready.exists()
+    finally:
+        move._close(handle)
+
+
+def test_ready_reader_waits_for_real_closed_publication(tmp_path, monkeypatch):
+    ready = tmp_path / 'ready.json'
+    graph, waits = {'case': 'delayed-publication'}, []
+    def publish(seconds):
+        waits.append(seconds)
+        _publish_ready_json(ready, graph)
+    monkeypatch.setattr(time, 'sleep', publish)
+    assert _wait_ready_json(ready, SimpleNamespace(poll=lambda: None),
+                            time.monotonic() + 1) == graph
+    assert waits == [0.02] and ready.exists()
+
+
+def test_ready_reader_missing_signal_after_child_exit_is_failure(tmp_path, monkeypatch):
+    ready = tmp_path / 'ready.json'
+    monkeypatch.setattr(time, 'sleep', lambda _: pytest.fail('Exited child cannot publish a signal'))
+    with pytest.raises(FileNotFoundError):
+        _wait_ready_json(ready, SimpleNamespace(poll=lambda: 1), time.monotonic() + 1)
+    assert not ready.exists()
+
+
+def test_ready_reader_malformed_signal_is_not_retried(tmp_path, monkeypatch):
+    ready = tmp_path / 'ready.json'
+    ready.write_text('{"incomplete":', encoding='utf-8')
+    monkeypatch.setattr(time, 'sleep', lambda _: pytest.fail('Malformed publication must fail'))
+    with pytest.raises(json.JSONDecodeError):
+        _wait_ready_json(ready, SimpleNamespace(poll=lambda: None), time.monotonic() + 1)
+
+
+def test_ready_reader_unrelated_io_error_is_not_retried(tmp_path, monkeypatch):
+    error = OSError('Controlled non-sharing I/O failure')
+    def refuse(*args, **kwargs):
+        raise error
+    monkeypatch.setattr(Path, 'read_text', refuse)
+    monkeypatch.setattr(time, 'sleep', lambda _: pytest.fail('Unrelated I/O errors must fail'))
+    with pytest.raises(OSError) as caught:
+        _wait_ready_json(tmp_path / 'ready.json', SimpleNamespace(poll=lambda: None),
+                         time.monotonic() + 1)
+    assert caught.value is error
 
 
 def fingerprint(path):
@@ -370,10 +461,8 @@ def test_r1_process_quarantine_and_normal_exit_release(tmp_path, case, capsys):
     witness = None
     try:
         deadline = time.monotonic() + 15
-        while not ready.exists() and child.poll() is None and time.monotonic() < deadline:
-            time.sleep(0.02)
+        evidence = _wait_ready_json(ready, child, deadline)
         assert ready.exists(), "Child failed before ownership/lock witness"
-        evidence = json.loads(ready.read_text(encoding="utf-8"))
         assert evidence["case"] == case
         renamed = case in ("submission-after-effect", "submission-systemexit-after-effect",
                            "free-before-effect", "free-after-effect")
@@ -1129,10 +1218,8 @@ def test_r4_relative_create_uncertainty_owns_resources_until_process_exit(tmp_pa
     witness = None
     try:
         deadline = time.monotonic() + 15
-        while not ready.exists() and child.poll() is None and time.monotonic() < deadline:
-            time.sleep(0.02)
+        observed = _wait_ready_json(ready, child, deadline)
         assert ready.exists(), "Child did not establish quarantine witness"
-        observed = json.loads(ready.read_text(encoding="utf-8"))
         locked = dst if observed["published"] else src
         try:
             handle = move._open(str(locked))
